@@ -67,10 +67,9 @@ class LoginActivity : AppCompatActivity() {
             }
         }
 
-        // Optional: Redirect to Signup screen
-        //signupText.setOnClickListener {
-         //   val intent = Intent(this, SignupActivity::class.java)
-           // startActivity(intent)
-       // }
+        signupText.setOnClickListener {
+            val intent = Intent(this, SignupActivity::class.java)
+            startActivity(intent)
+        }
     }
 }
