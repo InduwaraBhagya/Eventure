@@ -38,7 +38,11 @@ class LoginActivity : AppCompatActivity() {
                 Toast.makeText(this, "Invalid email or password", Toast.LENGTH_SHORT).show()
             }
         }
+        //signupText.setOnClickListener {
+          //  val intent = Intent(this, SignupActivity::class.java)
+         //  startActivity(intent)
+        }
 
 
     }
-}
+
