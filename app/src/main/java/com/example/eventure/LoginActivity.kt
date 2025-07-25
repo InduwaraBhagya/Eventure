@@ -39,10 +39,9 @@ class LoginActivity : AppCompatActivity() {
             }
         }
         //signupText.setOnClickListener {
-          //  val intent = Intent(this, SignupActivity::class.java)
-         //  startActivity(intent)
-        }
-
-
+        //  val intent = Intent(this, SignupActivity::class.java)
+        //  startActivity(intent)
     }
 
+
+}
