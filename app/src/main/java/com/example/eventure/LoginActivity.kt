@@ -5,15 +5,18 @@ import android.graphics.Color
 import android.os.Bundle
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
+import com.google.firebase.auth.FirebaseAuth
 
 class LoginActivity : AppCompatActivity() {
 
-    private val dummyEmail = "bhagya@gmail.com"
-    private val dummyPassword = "123456"
+    private lateinit var auth: FirebaseAuth
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
+
+        // Firebase auth instance
+        auth = FirebaseAuth.getInstance()
 
         val emailInput = findViewById<EditText>(R.id.etLoginEmail)
         val passwordInput = findViewById<EditText>(R.id.etLoginPassword)
@@ -21,12 +24,9 @@ class LoginActivity : AppCompatActivity() {
         val signupText = findViewById<TextView>(R.id.tvSignupRedirect)
         val spinner = findViewById<Spinner>(R.id.spinnerUserRole)
 
-
         val roles = arrayOf("Select Role", "User", "Admin")
         val adapter = object : ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, roles) {
-
             override fun isEnabled(position: Int): Boolean = position != 0
-
 
             override fun getDropDownView(position: Int, convertView: android.view.View?, parent: android.view.ViewGroup): android.view.View {
                 val view = super.getDropDownView(position, convertView, parent)
@@ -35,15 +35,12 @@ class LoginActivity : AppCompatActivity() {
                 return view
             }
 
-
             override fun getView(position: Int, convertView: android.view.View?, parent: android.view.ViewGroup): android.view.View {
                 val view = super.getView(position, convertView, parent)
                 val tv = view as TextView
                 tv.setTextColor(if (position == 0) Color.GRAY else Color.BLACK)
                 return view
             }
-
-
         }
 
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
@@ -56,21 +53,27 @@ class LoginActivity : AppCompatActivity() {
 
             if (email.isEmpty() || password.isEmpty() || selectedRole == "Select Role") {
                 Toast.makeText(this, "Please fill in all fields and select a role", Toast.LENGTH_SHORT).show()
-            } else if (email == dummyEmail && password == dummyPassword) {
-                Toast.makeText(this, "Login successful as $selectedRole", Toast.LENGTH_SHORT).show()
-                // You can add role-based intent navigation here if needed
-                // val intent = Intent(this, HomeActivity::class.java)
-                // startActivity(intent)
-                finish()
-            } else {
-                Toast.makeText(this, "Invalid email or password", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
             }
+
+            // Firebase login
+            auth.signInWithEmailAndPassword(email, password)
+                .addOnCompleteListener(this) { task ->
+                    if (task.isSuccessful) {
+                        Toast.makeText(this, "Login successful as $selectedRole", Toast.LENGTH_SHORT).show()
+                        // You can add role-based navigation here
+                        // startActivity(Intent(this, HomeActivity::class.java))
+                        finish()
+                    } else {
+                        Toast.makeText(this, "Login failed: ${task.exception?.message}", Toast.LENGTH_SHORT).show()
+                    }
+                }
         }
 
-        // Optional: Redirect to Signup screen
         //signupText.setOnClickListener {
-         //   val intent = Intent(this, SignupActivity::class.java)
-           // startActivity(intent)
+            // Navigate to SignupActivity (if created)
+           // val intent = Intent(this, SignupActivity::class.java)
+            //startActivity(intent)
        // }
     }
 }
