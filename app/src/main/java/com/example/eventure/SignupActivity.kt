@@ -39,9 +39,9 @@ class SignupActivity : AppCompatActivity() {
                 Toast.makeText(this, "Signed up as $name", Toast.LENGTH_SHORT).show()
 
 
-                val intent = Intent(this, LoginActivity::class.java)
-                startActivity(intent)
-                finish()
+               // val intent = Intent(this, LoginActivity::class.java)
+               // startActivity(intent)
+               // finish()
             }
         }
     }
