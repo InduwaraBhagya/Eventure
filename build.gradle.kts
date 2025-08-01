@@ -4,4 +4,3 @@ plugins {
     alias(libs.plugins.kotlin.android) apply false
     id("com.google.gms.google-services") version "4.4.3" apply false
 }
-git add db.json
