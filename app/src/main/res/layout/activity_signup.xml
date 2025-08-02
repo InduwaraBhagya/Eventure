@@ -33,7 +33,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/ivLogo"
-        app:layout_constraintVertical_bias="0.045">
+        app:layout_constraintVertical_bias="0.0">
 
 
         <TextView
@@ -60,11 +60,11 @@
                 android:background="#FDEBD0"
                 android:drawableStart="@drawable/person_24"
                 android:drawablePadding="15dp"
-                android:drawableTint="#FF6F3C"
+                android:drawableTint="#000000"
                 android:hint="Name"
                 android:padding="12dp"
-                android:textColor="#000000"
-                android:textColorHint="#888888" />
+                android:textColor="#333131"
+                android:textColorHint="#3A3838" />
         </androidx.cardview.widget.CardView>
 
         <androidx.cardview.widget.CardView
@@ -81,12 +81,12 @@
                 android:background="#FDEBD0"
                 android:drawableStart="@drawable/baseline_email_24"
                 android:drawablePadding="15dp"
-                android:drawableTint="#FF6F3C"
+                android:drawableTint="#000000"
                 android:hint="Email"
                 android:inputType="textEmailAddress"
                 android:padding="12dp"
-                android:textColor="#000000"
-                android:textColorHint="#888888" />
+                android:textColor="#333131"
+                android:textColorHint="#3A3838" />
         </androidx.cardview.widget.CardView>
 
         <androidx.cardview.widget.CardView
@@ -103,12 +103,12 @@
                 android:background="#FDEBD0"
                 android:drawableStart="@drawable/ic_lock"
                 android:drawablePadding="15dp"
-                android:drawableTint="#FF6F3C"
+                android:drawableTint="#000000"
                 android:hint="Password"
                 android:inputType="textPassword"
                 android:padding="12dp"
-                android:textColor="#000000"
-                android:textColorHint="#888888" />
+                android:textColor="#333131"
+                android:textColorHint="#3A3838" />
         </androidx.cardview.widget.CardView>
 
         <androidx.cardview.widget.CardView
@@ -125,12 +125,12 @@
                 android:background="#FDEBD0"
                 android:drawableStart="@drawable/ic_lock"
                 android:drawablePadding="15dp"
-                android:drawableTint="#FF6F3C"
+                android:drawableTint="#000000"
                 android:hint="Confirm Password"
                 android:inputType="textPassword"
                 android:padding="12dp"
-                android:textColor="#000000"
-                android:textColorHint="#888888" />
+                android:textColor="#333131"
+                android:textColorHint="#3A3838" />
         </androidx.cardview.widget.CardView>
 
         <Button

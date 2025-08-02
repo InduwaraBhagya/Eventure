@@ -15,7 +15,7 @@ class LoginActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
 
-        // Firebase auth instance
+
         auth = FirebaseAuth.getInstance()
 
         val emailInput = findViewById<EditText>(R.id.etLoginEmail)
@@ -56,12 +56,12 @@ class LoginActivity : AppCompatActivity() {
                 return@setOnClickListener
             }
 
-            // Firebase login
+
             auth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this) { task ->
                     if (task.isSuccessful) {
                         Toast.makeText(this, "Login successful as $selectedRole", Toast.LENGTH_SHORT).show()
-                        // You can add role-based navigation here
+                        //   role-based navigation
                         // startActivity(Intent(this, HomeActivity::class.java))
                         finish()
                     } else {
@@ -70,10 +70,9 @@ class LoginActivity : AppCompatActivity() {
                 }
         }
 
-        //signupText.setOnClickListener {
-            // Navigate to SignupActivity (if created)
-           // val intent = Intent(this, SignupActivity::class.java)
-            //startActivity(intent)
-       // }
+        signupText.setOnClickListener {
+            val intent = Intent(this, SignupActivity::class.java)
+            startActivity(intent)
+       }
     }
 }
