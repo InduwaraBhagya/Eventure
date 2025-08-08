@@ -5,6 +5,7 @@ import android.graphics.Color
 import android.os.Bundle
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
+import com.example.eventure.ui.admin.AdminMainActivity
 import com.google.firebase.auth.FirebaseAuth
 
 class LoginActivity : AppCompatActivity() {
@@ -59,10 +60,10 @@ class LoginActivity : AppCompatActivity() {
 
             auth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this) { task ->
-                    if (task.isSuccessful) {
+                    if (task.isSuccessful && selectedRole == "Admin") {
                         Toast.makeText(this, "Login successful as $selectedRole", Toast.LENGTH_SHORT).show()
                         //   role-based navigation
-                        // startActivity(Intent(this, HomeActivity::class.java))
+                        startActivity(Intent(this, AdminMainActivity::class.java))
                         finish()
                     } else {
                         Toast.makeText(this, "Login failed: ${task.exception?.message}", Toast.LENGTH_SHORT).show()
@@ -73,6 +74,6 @@ class LoginActivity : AppCompatActivity() {
         signupText.setOnClickListener {
             val intent = Intent(this, SignupActivity::class.java)
             startActivity(intent)
-       }
+        }
     }
 }
