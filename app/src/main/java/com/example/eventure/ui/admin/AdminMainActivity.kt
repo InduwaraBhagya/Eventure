@@ -43,7 +43,7 @@ class AdminMainActivity : AppCompatActivity() {
     private fun setupClickListeners() {
         binding.cardAddEvent.setOnClickListener {
             Log.d("AdminMain", "Add Event clicked")
-            startActivity(Intent())
+            startActivity(Intent(this, AddEventActivity::class.java))
         }
 
         binding.cardViewEvents.setOnClickListener {
