@@ -62,7 +62,7 @@ class LoginActivity : AppCompatActivity() {
                 .addOnCompleteListener(this) { task ->
                     if (task.isSuccessful && selectedRole == "Admin") {
                         Toast.makeText(this, "Login successful as $selectedRole", Toast.LENGTH_SHORT).show()
-                        //   role-based navigation
+
                         startActivity(Intent(this, AdminMainActivity::class.java))
                         finish()
                     } else {
