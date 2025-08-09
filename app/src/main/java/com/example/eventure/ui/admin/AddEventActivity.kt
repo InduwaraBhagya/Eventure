@@ -19,6 +19,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.eventure.R
@@ -51,13 +52,15 @@ class AddEventActivity : AppCompatActivity(), OnMapReadyCallback {
     private val selectedImageUris = mutableListOf<Uri>()
     private var selectedCategory: String? = null
     private var selectedDate: Calendar = Calendar.getInstance()
-
     private var googleMap: GoogleMap? = null
     private var selectedLocation: LatLng? = null
     private var selectedAddress: String = ""
     private lateinit var geocoder: Geocoder
     private var isMapReady = false
     private var mapFragment: SupportMapFragment? = null
+
+    // Payment type selection
+    private var isPaymentTypePaid = false
 
     private lateinit var pickImageFromGalleryLauncher: ActivityResultLauncher<Intent>
     private lateinit var takePictureLauncher: ActivityResultLauncher<Intent>
@@ -71,6 +74,7 @@ class AddEventActivity : AppCompatActivity(), OnMapReadyCallback {
         setupRecyclerView()
         setupCategoryChips()
         setupClickListeners()
+        setupPaymentTypeSelection()
         initializeActivityLaunchers()
         observeViewModel()
 
@@ -131,13 +135,55 @@ class AddEventActivity : AppCompatActivity(), OnMapReadyCallback {
         }
     }
 
-    private fun setupMapFragment() {
+    private fun setupPaymentTypeSelection() {
+        // Initially hide the ticket price field and set free as default
+        binding.eventPriceLayout.visibility = View.GONE
+        selectPaymentType(false)
+    }
 
+    private fun selectPaymentType(isPaid: Boolean) {
+        isPaymentTypePaid = isPaid
+
+        if (isPaid) {
+            // Paid selected - show ticket price field
+            binding.eventPriceLayout.visibility = View.VISIBLE
+
+            // Update button appearance - Simple color approach
+            binding.btnPaid.backgroundTintList = ContextCompat.getColorStateList(this, R.color.admin_theme)
+            binding.btnPaid.setTextColor(ContextCompat.getColor(this, android.R.color.white))
+
+            binding.btnFree.backgroundTintList = ContextCompat.getColorStateList(this, android.R.color.white)
+            binding.btnFree.setTextColor(ContextCompat.getColor(this, R.color.admin_theme))
+
+        } else {
+            // Free selected - hide ticket price field
+            binding.eventPriceLayout.visibility = View.GONE
+            binding.editTicketPrice.text?.clear()
+
+            // Update button appearance - Simple color approach
+            binding.btnFree.backgroundTintList = ContextCompat.getColorStateList(this, R.color.admin_theme)
+            binding.btnFree.setTextColor(ContextCompat.getColor(this, android.R.color.white))
+
+            binding.btnPaid.backgroundTintList = ContextCompat.getColorStateList(this, android.R.color.white)
+            binding.btnPaid.setTextColor(ContextCompat.getColor(this, R.color.admin_theme))
+        }
+    }
+
+    private fun setupMapFragment() {
         mapFragment = SupportMapFragment.newInstance()
         mapFragment?.getMapAsync(this)
     }
 
     private fun setupClickListeners() {
+        // Payment type selection
+        binding.btnFree.setOnClickListener {
+            selectPaymentType(false)
+        }
+
+        binding.btnPaid.setOnClickListener {
+            selectPaymentType(true)
+        }
+
         binding.editTextEventDate.setOnClickListener { showDatePicker() }
         binding.editTextEventTime.setOnClickListener { showTimePicker() }
         binding.buttonSelectImages.setOnClickListener { showImagePickerDialog() }
@@ -191,11 +237,9 @@ class AddEventActivity : AppCompatActivity(), OnMapReadyCallback {
                 val address = addresses[0]
                 val latLng = LatLng(address.latitude, address.longitude)
 
-
                 selectedLocation = latLng
                 selectedAddress = getFullAddress(address)
                 binding.editTextEventLocation.setText(selectedAddress)
-
 
                 showMapWithLocation(latLng)
 
@@ -206,20 +250,17 @@ class AddEventActivity : AppCompatActivity(), OnMapReadyCallback {
         } catch (e: Exception) {
             Toast.makeText(this, "Error searching location: ${e.message}", Toast.LENGTH_SHORT).show()
         } finally {
-
             binding.buttonSearchLocation.isEnabled = true
             binding.buttonSearchLocation.text = "Search"
         }
     }
 
     private fun showMapWithLocation(latLng: LatLng) {
-
         if (mapFragment != null && !mapFragment!!.isAdded) {
             supportFragmentManager.beginTransaction()
                 .replace(R.id.mapFrame, mapFragment!!)
                 .commitAllowingStateLoss()
         }
-
 
         showMapWithAnimation()
 
@@ -241,7 +282,6 @@ class AddEventActivity : AppCompatActivity(), OnMapReadyCallback {
 
     private fun selectLocationOnMap(latLng: LatLng) {
         if (!isMapReady || googleMap == null) {
-
             selectedLocation = latLng
             return
         }
@@ -417,17 +457,76 @@ class AddEventActivity : AppCompatActivity(), OnMapReadyCallback {
         ).show()
     }
 
-    private fun submitEvent() {
+    private fun validateInputs(): Boolean {
         val eventName = binding.editTextEventName.text.toString().trim()
         val eventDescription = binding.editTextEventDescription.text.toString().trim()
         val eventLocation = binding.editTextEventLocation.text.toString().trim()
         val eventDateStr = binding.editTextEventDate.text.toString()
         val eventTimeStr = binding.editTextEventTime.text.toString()
 
-        if (eventName.isEmpty() || eventDescription.isEmpty() || eventLocation.isEmpty() ||
-            eventDateStr.isEmpty() || eventTimeStr.isEmpty() || selectedCategory == null) {
-            Toast.makeText(this, "Please fill all fields and select a category", Toast.LENGTH_SHORT).show()
+        when {
+            eventName.isEmpty() -> {
+                binding.editTextEventName.error = "Event name is required"
+                binding.editTextEventName.requestFocus()
+                return false
+            }
+            eventDescription.isEmpty() -> {
+                binding.editTextEventDescription.error = "Description is required"
+                binding.editTextEventDescription.requestFocus()
+                return false
+            }
+            eventLocation.isEmpty() -> {
+                binding.editTextEventLocation.error = "Location is required"
+                binding.editTextEventLocation.requestFocus()
+                return false
+            }
+            eventDateStr.isEmpty() -> {
+                binding.editTextEventDate.error = "Date is required"
+                Toast.makeText(this, "Please select event date", Toast.LENGTH_SHORT).show()
+                return false
+            }
+            eventTimeStr.isEmpty() -> {
+                binding.editTextEventTime.error = "Time is required"
+                Toast.makeText(this, "Please select event time", Toast.LENGTH_SHORT).show()
+                return false
+            }
+            selectedCategory == null -> {
+                Toast.makeText(this, "Please select a category", Toast.LENGTH_SHORT).show()
+                return false
+            }
+            isPaymentTypePaid && binding.editTicketPrice.text.toString().trim().isEmpty() -> {
+                binding.editTicketPrice.error = "Ticket price is required for paid events"
+                binding.editTicketPrice.requestFocus()
+                return false
+            }
+            isPaymentTypePaid && binding.editTicketPrice.text.toString().trim().toDoubleOrNull() == null -> {
+                binding.editTicketPrice.error = "Please enter a valid price"
+                binding.editTicketPrice.requestFocus()
+                return false
+            }
+            isPaymentTypePaid && binding.editTicketPrice.text.toString().trim().toDouble() < 0 -> {
+                binding.editTicketPrice.error = "Price cannot be negative"
+                binding.editTicketPrice.requestFocus()
+                return false
+            }
+            else -> return true
+        }
+    }
+
+    private fun submitEvent() {
+        if (!validateInputs()) {
             return
+        }
+
+        val eventName = binding.editTextEventName.text.toString().trim()
+        val eventDescription = binding.editTextEventDescription.text.toString().trim()
+        val eventLocation = binding.editTextEventLocation.text.toString().trim()
+        val eventTimeStr = binding.editTextEventTime.text.toString()
+
+        val ticketPrice = if (isPaymentTypePaid) {
+            binding.editTicketPrice.text.toString().trim().toDouble()
+        } else {
+            0.0
         }
 
         val event = Event(
@@ -438,7 +537,7 @@ class AddEventActivity : AppCompatActivity(), OnMapReadyCallback {
             location = eventLocation,
             category = selectedCategory!!,
             maxAttendees = 100,
-            ticketPrice = 0.0,
+            ticketPrice = ticketPrice,
             contactEmail = "default@email.com",
             contactPhone = "0000000000"
         )
@@ -472,6 +571,7 @@ class AddEventActivity : AppCompatActivity(), OnMapReadyCallback {
             editTextEventLocation.text?.clear()
             editTextEventDate.text?.clear()
             editTextEventTime.text?.clear()
+            editTicketPrice.text?.clear()
             chipGroupCategories.clearCheck()
             selectedCategory = null
             selectedImageUris.clear()
@@ -482,6 +582,9 @@ class AddEventActivity : AppCompatActivity(), OnMapReadyCallback {
             selectedLocation = null
             selectedAddress = ""
             mapContainer.visibility = View.GONE
+
+
+            selectPaymentType(false)
         }
         Toast.makeText(this, "Fields cleared", Toast.LENGTH_SHORT).show()
     }
