@@ -16,7 +16,7 @@
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            android:background="@color/admin_accent"
+            android:background="@color/admin_theme"
             app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
 
     </com.google.android.material.appbar.AppBarLayout>
@@ -38,8 +38,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="16dp"
                 android:hint="@string/event_name"
-                app:boxStrokeColor="@color/admin_theme"
-                app:hintTextColor="@color/admin_theme">
+                app:boxStrokeColor="@color/colorPrimary"
+                app:hintTextColor="@color/colorPrimary">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/editTextEventName"
@@ -56,8 +56,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="16dp"
                 android:hint="@string/event_description"
-                app:boxStrokeColor="@color/admin_theme"
-                app:hintTextColor="@color/admin_theme">
+                app:boxStrokeColor="@color/colorPrimary"
+                app:hintTextColor="@color/colorPrimary">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/editTextEventDescription"
@@ -75,8 +75,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="16dp"
                 android:hint="@string/event_location"
-                app:boxStrokeColor="@color/admin_theme"
-                app:hintTextColor="@color/admin_theme">
+                app:boxStrokeColor="@color/colorPrimary"
+                app:hintTextColor="@color/colorPrimary">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/editTextEventLocation"
@@ -101,8 +101,8 @@
                     android:layout_marginEnd="8dp"
                     android:layout_weight="1"
                     android:hint="@string/event_date"
-                    app:boxStrokeColor="@color/admin_theme"
-                    app:hintTextColor="@color/admin_theme"
+                    app:boxStrokeColor="@color/colorPrimary"
+                    app:hintTextColor="@color/colorPrimary"
                     app:endIconDrawable="@drawable/baseline_calendar_month_24"
                     app:endIconMode="custom">
 
@@ -123,8 +123,8 @@
                     android:layout_marginStart="8dp"
                     android:layout_weight="1"
                     android:hint="@string/event_time"
-                    app:boxStrokeColor="@color/admin_theme"
-                    app:hintTextColor="@color/admin_theme"
+                    app:boxStrokeColor="@color/colorPrimary"
+                    app:hintTextColor="@color/colorPrimary"
                     app:endIconDrawable="@drawable/baseline_access_time_24"
                     app:endIconMode="custom">
 
@@ -146,14 +146,13 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="16dp"
                 android:hint="@string/event_category"
-                app:boxStrokeColor="@color/admin_theme"
-                app:hintTextColor="@color/admin_primary">
+                app:boxStrokeColor="@color/colorPrimary"
+                app:hintTextColor="@color/admin_theme">
 
                 <TextView
                     android:id="@+id/tvEventCategoryLabel"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Category:"
                     android:labelFor="@id/actvEventCategory" />
 
                 <AutoCompleteTextView
@@ -172,7 +171,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="16dp"
                 app:cardCornerRadius="8dp"
-                app:cardElevation="2dp">
+                app:cardElevation="2dp"
+                app:cardBackgroundColor="#F3F3F3">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -216,7 +216,8 @@
                         android:layout_gravity="center"
                         android:text="Add Images"
                         app:icon="@drawable/baseline_add_photo_alternate_24"
-                        app:strokeColor="@color/admin_primary" />
+                        app:strokeColor="@color/admin_theme"
+                        app:backgroundTint="@color/admin_theme"/>
 
                 </LinearLayout>
 
@@ -227,7 +228,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="56dp"
                 android:layout_marginTop="16dp"
-                android:backgroundTint="@color/admin_primary"
+                android:backgroundTint="@color/admin_theme"
                 android:text="@string/save_event"
                 android:textColor="@android:color/white"
                 android:textSize="16sp"

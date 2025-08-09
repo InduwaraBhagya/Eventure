@@ -1,5 +1,6 @@
 package com.example.eventure.ui.admin
 
+import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -27,6 +28,9 @@ class AdminEventListFragment : Fragment() {
 
     companion object {
         private const val TAG = "AdminEventListFragment"
+        private const val REQUEST_CODE_EDIT_EVENT = 1001
+        private const val REQUEST_CODE_ADD_EVENT = 1002
+        private const val REQUEST_CODE_VIEW_EVENT = 1003
     }
 
     override fun onCreateView(
@@ -63,9 +67,9 @@ class AdminEventListFragment : Fragment() {
                         putExtra("eventId", event.id)
                         putExtra("EVENT_ID", event.id)
                         putExtra(AdminConstants.EXTRA_EVENT_ID, event.id)
-                        flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                        // Remove FLAG_ACTIVITY_NEW_TASK
                     }
-                    startActivity(intent)
+                    startActivityForResult(intent, REQUEST_CODE_VIEW_EVENT)
                 } catch (e: Exception) {
                     Log.e(TAG, "Error opening event details", e)
                     Toast.makeText(requireContext(), "Error opening event details: ${e.message}", Toast.LENGTH_SHORT).show()
@@ -78,9 +82,9 @@ class AdminEventListFragment : Fragment() {
                         putExtra("eventId", event.id)
                         putExtra("EVENT_ID", event.id)
                         putExtra(AdminConstants.EXTRA_EVENT_ID, event.id)
-                        flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                        // Remove FLAG_ACTIVITY_NEW_TASK
                     }
-                    startActivity(intent)
+                    startActivityForResult(intent, REQUEST_CODE_EDIT_EVENT)
                 } catch (e: Exception) {
                     Log.e(TAG, "Error opening edit event", e)
                     Toast.makeText(requireContext(), "Error opening edit screen: ${e.message}", Toast.LENGTH_SHORT).show()
@@ -143,10 +147,8 @@ class AdminEventListFragment : Fragment() {
     private fun setupClickListeners() {
         binding.fabAddEvent?.setOnClickListener {
             try {
-                val intent = Intent(requireContext(), AddEventActivity::class.java).apply {
-                    flags = Intent.FLAG_ACTIVITY_NEW_TASK
-                }
-                startActivity(intent)
+                val intent = Intent(requireContext(), AddEventActivity::class.java)
+                startActivityForResult(intent, REQUEST_CODE_ADD_EVENT)
             } catch (e: Exception) {
                 Log.e(TAG, "Error opening add event", e)
                 Toast.makeText(requireContext(), "Error opening add event screen", Toast.LENGTH_SHORT).show()
@@ -205,10 +207,24 @@ class AdminEventListFragment : Fragment() {
             .show()
     }
 
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+
+        when (requestCode) {
+            REQUEST_CODE_EDIT_EVENT, REQUEST_CODE_ADD_EVENT, REQUEST_CODE_VIEW_EVENT -> {
+                if (resultCode == Activity.RESULT_OK) {
+                    Log.d(TAG, "Activity returned with RESULT_OK, refreshing events")
+                    viewModel.refreshEvents()
+                }
+            }
+        }
+    }
+
     override fun onResume() {
         super.onResume()
-        Log.d(TAG, "Fragment resumed, refreshing events")
-        viewModel.refreshEvents()
+        // Only refresh if we're not handling it in onActivityResult
+        Log.d(TAG, "Fragment resumed")
+        // Remove automatic refresh here since it's handled by onActivityResult
     }
 
     override fun onDestroyView() {

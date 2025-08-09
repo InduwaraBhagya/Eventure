@@ -6,10 +6,8 @@ import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
-import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.eventure.R
 import com.example.eventure.data.models.Event
@@ -31,6 +29,7 @@ class AdminEventDetailActivity : AppCompatActivity() {
 
     companion object {
         private const val TAG = "AdminEventDetail"
+        private const val REQUEST_CODE_EDIT_EVENT = 1001
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -40,9 +39,11 @@ class AdminEventDetailActivity : AppCompatActivity() {
             binding = ActivityAdminEventDetailBinding.inflate(layoutInflater)
             setContentView(binding.root)
 
+            // Initialize FirebaseFirestore
             val firestore = FirebaseFirestore.getInstance()
             viewModel = EventManagementViewModel(firestore)
 
+            // Get event ID from intent
             eventId = intent.getStringExtra("eventId")
                 ?: intent.getStringExtra("EVENT_ID")
                         ?: intent.getStringExtra(AdminConstants.EXTRA_EVENT_ID)
@@ -62,7 +63,6 @@ class AdminEventDetailActivity : AppCompatActivity() {
             observeViewModel()
 
             binding.progressBar.visibility = View.VISIBLE
-
             viewModel.loadEvent(eventId!!)
 
         } catch (e: Exception) {
@@ -102,9 +102,8 @@ class AdminEventDetailActivity : AppCompatActivity() {
                         putExtra("eventId", event.id)
                         putExtra("EVENT_ID", event.id)
                         putExtra(AdminConstants.EXTRA_EVENT_ID, event.id)
-                        flags = Intent.FLAG_ACTIVITY_NEW_TASK
                     }
-                    startActivity(intent)
+                    startActivityForResult(intent, REQUEST_CODE_EDIT_EVENT)
                 } catch (e: Exception) {
                     Log.e(TAG, "Error opening edit activity", e)
                     showSnackbar("Error opening edit screen: ${e.message}")
@@ -146,7 +145,7 @@ class AdminEventDetailActivity : AppCompatActivity() {
         viewModel.deleteResult.observe(this) { success ->
             if (success) {
                 showSnackbar(getString(R.string.event_deleted_successfully))
-                setResult(RESULT_OK) // Notify parent activity of changes
+                setResult(RESULT_OK)
                 finish()
             }
         }
@@ -242,9 +241,8 @@ class AdminEventDetailActivity : AppCompatActivity() {
                             putExtra("eventId", event.id)
                             putExtra("EVENT_ID", event.id)
                             putExtra(AdminConstants.EXTRA_EVENT_ID, event.id)
-                            flags = Intent.FLAG_ACTIVITY_NEW_TASK
                         }
-                        startActivity(intent)
+                        startActivityForResult(intent, REQUEST_CODE_EDIT_EVENT)
                     } catch (e: Exception) {
                         Log.e(TAG, "Error opening edit from menu", e)
                         showSnackbar("Error opening edit screen")
@@ -271,9 +269,20 @@ class AdminEventDetailActivity : AppCompatActivity() {
             .show()
     }
 
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == REQUEST_CODE_EDIT_EVENT && resultCode == RESULT_OK) {
+            // Reload the event data when returning from edit
+            eventId?.let {
+                Log.d(TAG, "Returned from edit, reloading event $it")
+                viewModel.loadEvent(it)
+            }
+        }
+    }
+
     override fun onResume() {
         super.onResume()
-        // Reload data when returning from edit
+        // Only reload data if we're not handling activity result
         eventId?.let {
             Log.d(TAG, "onResume: Reloading event $it")
             viewModel.loadEvent(it)
