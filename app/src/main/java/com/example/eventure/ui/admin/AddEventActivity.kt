@@ -61,7 +61,6 @@ class AddEventActivity : AppCompatActivity(), OnMapReadyCallback {
     private var isMapReady = false
     private var mapFragment: SupportMapFragment? = null
 
-    // Payment type selection
     private var isPaymentTypePaid = false
 
     private lateinit var pickImageFromGalleryLauncher: ActivityResultLauncher<Intent>
@@ -147,10 +146,8 @@ class AddEventActivity : AppCompatActivity(), OnMapReadyCallback {
         isPaymentTypePaid = isPaid
 
         if (isPaid) {
-            // Paid selected - show ticket price field
             binding.eventPriceLayout.visibility = View.VISIBLE
 
-            // Update button appearance - Simple color approach
             binding.btnPaid.backgroundTintList = ContextCompat.getColorStateList(this, R.color.admin_theme)
             binding.btnPaid.setTextColor(ContextCompat.getColor(this, android.R.color.white))
 
@@ -158,11 +155,10 @@ class AddEventActivity : AppCompatActivity(), OnMapReadyCallback {
             binding.btnFree.setTextColor(ContextCompat.getColor(this, R.color.admin_theme))
 
         } else {
-            // Free selected - hide ticket price field
+
             binding.eventPriceLayout.visibility = View.GONE
             binding.editTicketPrice.text?.clear()
 
-            // Update button appearance - Simple color approach
             binding.btnFree.backgroundTintList = ContextCompat.getColorStateList(this, R.color.admin_theme)
             binding.btnFree.setTextColor(ContextCompat.getColor(this, android.R.color.white))
 
@@ -299,7 +295,6 @@ class AddEventActivity : AppCompatActivity(), OnMapReadyCallback {
         )
         googleMap?.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15f))
 
-        // If location text is empty, reverse geocode to get address
         if (binding.editTextEventLocation.text.toString().trim().isEmpty()) {
             reverseGeocode(latLng)
         }
@@ -562,7 +557,7 @@ class AddEventActivity : AppCompatActivity(), OnMapReadyCallback {
         val eventLocation = binding.editTextEventLocation.text.toString().trim()
         val eventTimeStr = binding.editTextEventTime.text.toString()
 
-        // Get organizer information
+
         val organizerName = binding.editTextOrganizerName.text.toString().trim()
         val organizerEmail = binding.editTextOrganizerEmail.text.toString().trim()
         val organizerContact = binding.editTextOrganizerContact.text.toString().trim()
@@ -628,7 +623,6 @@ class AddEventActivity : AppCompatActivity(), OnMapReadyCallback {
             editTextEventTime.text?.clear()
             editTicketPrice.text?.clear()
 
-            // Clear organizer fields
             editTextOrganizerName.text?.clear()
             editTextOrganizerEmail.text?.clear()
             editTextOrganizerContact.text?.clear()
