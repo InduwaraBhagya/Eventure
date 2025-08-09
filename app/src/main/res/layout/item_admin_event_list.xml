@@ -17,7 +17,6 @@
         android:layout_height="wrap_content"
         android:padding="16dp">
 
-        <!-- Event Thumbnail -->
         <ImageView
             android:id="@+id/EventImage"
             android:layout_width="80dp"
@@ -30,7 +29,6 @@
             app:layout_constraintBottom_toBottomOf="parent"
             tools:src="@drawable/error_image" />
 
-        <!-- Event Name -->
         <TextView
             android:id="@+id/EventName"
             android:layout_width="0dp"
@@ -46,7 +44,6 @@
             app:layout_constraintEnd_toStartOf="@id/chipCategory"
             tools:text="Summer Music Festival" />
 
-        <!-- Category Chip -->
         <com.google.android.material.chip.Chip
             android:id="@+id/chipCategory"
             style="@style/Widget.MaterialComponents.ChipGroup"
@@ -61,7 +58,6 @@
             app:layout_constraintEnd_toEndOf="parent"
             tools:text="Musical" />
 
-        <!-- Event Location -->
         <TextView
             android:id="@+id/EventLocation"
             android:layout_width="0dp"
@@ -80,7 +76,6 @@
             app:layout_constraintEnd_toEndOf="parent"
             tools:text="Colombo City Hall" />
 
-        <!-- Event Date -->
         <TextView
             android:id="@+id/EventDate"
             android:layout_width="0dp"
@@ -96,7 +91,6 @@
             app:layout_constraintTop_toBottomOf="@id/EventLocation"
             tools:text="August 10, 2025 • 6:00 PM" />
 
-        <!-- Event Status -->
         <TextView
             android:id="@+id/textViewEventStatus"
             android:layout_width="wrap_content"
@@ -109,7 +103,6 @@
             app:layout_constraintStart_toStartOf="@id/EventDate"
             tools:text="Upcoming" />
 
-        <!-- Participant Count -->
         <TextView
             android:id="@+id/textViewParticipantCount"
             android:layout_width="wrap_content"
@@ -122,7 +115,6 @@
             app:layout_constraintStart_toStartOf="@id/EventDate"
             tools:text="120 participants" />
 
-        <!-- Edit Button -->
         <ImageButton
             android:id="@+id/buttonEdit"
             android:layout_width="32dp"
@@ -136,7 +128,6 @@
             app:layout_constraintBottom_toBottomOf="@id/textViewParticipantCount"
             app:tint="@color/admin_primary" />
 
-        <!-- Delete Button -->
         <ImageButton
             android:id="@+id/buttonDelete"
             android:layout_width="32dp"
@@ -160,7 +151,6 @@
             tools:ignore="MissingConstraints" />
 
 
-        <!-- Menu Button (3 dots) -->
         <ImageButton
             android:id="@+id/btnMenu"
             android:layout_width="32dp"

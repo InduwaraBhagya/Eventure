@@ -31,7 +31,6 @@ class EventListActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         setupToolbar()
-        // Remove setupViewModel() call or replace it with initialization code
         setupRecyclerView()
         setupFilterChips()
         setupClickListeners()
@@ -77,7 +76,6 @@ class EventListActivity : AppCompatActivity() {
 
         binding.chipGroupFilters.removeAllViews()
 
-        // Add "All" chip
         val allChip = Chip(this)
         allChip.text = "All"
         allChip.isCheckable = true
@@ -91,7 +89,6 @@ class EventListActivity : AppCompatActivity() {
         }
         binding.chipGroupFilters.addView(allChip)
 
-        // Add category chips
         EventCategory.values().forEach { category ->
             val chip = Chip(this)
             chip.text = category.displayName
@@ -195,7 +192,6 @@ class EventListActivity : AppCompatActivity() {
                 }
             })
 
-            // Add placeholder text
             queryHint = "Search events..."
         }
 

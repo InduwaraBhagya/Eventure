@@ -77,7 +77,6 @@ object DateUtils {
         }
     }
 
-    // <- Add this here
     fun isEventUpcoming(timestamp: Timestamp): Boolean {
         return timestamp.toDate().after(Date())
     }

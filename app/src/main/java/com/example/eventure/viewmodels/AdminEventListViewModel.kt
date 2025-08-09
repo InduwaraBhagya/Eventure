@@ -72,14 +72,12 @@ class AdminEventListViewModel @Inject constructor(
     private fun applyFiltersAndSearch() {
         var result = allEvents
 
-        // Apply category filter - comparing EventCategory with event.category String name
         currentFilter?.let { category ->
             result = result.filter { event ->
                 event.category == category.name
             }
         }
 
-        // Apply search query
         if (currentSearchQuery.isNotEmpty()) {
             result = result.filter { event ->
                 event.name.contains(currentSearchQuery, ignoreCase = true) ||

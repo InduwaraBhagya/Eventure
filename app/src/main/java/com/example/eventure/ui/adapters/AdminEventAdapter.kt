@@ -43,13 +43,8 @@ class AdminEventAdapter(
                 EventDescription.text = event.description
                 EventLocation.text = event.location
 
-//                val formattedDateTime = "${DateUtils.formatDate(event.date.toDate())} • ${event.time}"
-//                EventDateTime.text = formattedDateTime
-
                 EventDateTime.text = DateUtils.formatTimestamp(event.date)
-//                tvEventTime.text = event.time
 
-                // Category string (uppercase assumed) to display name & color
                 val categoryDisplayName = when (event.category.uppercase()) {
                     "MUSICAL" -> "Musical"
                     "SPORTS" -> "Sports"
@@ -59,7 +54,6 @@ class AdminEventAdapter(
                 }
                 chipCategory.text = categoryDisplayName
 
-                // Set category color
                 val categoryColor = when (event.category.uppercase()) {
                     "MUSICAL" -> R.color.category_musical
                     "SPORTS" -> R.color.category_sports
@@ -69,7 +63,6 @@ class AdminEventAdapter(
                 }
                 chipCategory.setChipBackgroundColorResource(categoryColor)
 
-                // Load first image if available
                 if (event.imageUrls.isNotEmpty()) {
                     Glide.with(binding.root.context)
                         .load(event.imageUrls.first())
@@ -80,7 +73,6 @@ class AdminEventAdapter(
                     EventImage.setImageResource(R.drawable.placeholder_event)
                 }
 
-                // Set event status based on date
                 val isUpcoming = DateUtils.isEventUpcoming(event.date)
                 EventStatus.text = if (isUpcoming) "Upcoming" else "Past"
                 EventStatus.setTextColor(
@@ -89,13 +81,11 @@ class AdminEventAdapter(
                     )
                 )
 
-                // Click listeners - FIXED
                 root.setOnClickListener {
                     try {
-                        onEventClick(event) // Use callback instead of direct intent
+                        onEventClick(event)
                     } catch (e: Exception) {
-                        // Fallback to direct intent if callback fails
-                        val context = binding.root.context
+                                      val context = binding.root.context
                         val intent = Intent(context, AdminEventDetailActivity::class.java).apply {
                             putExtra("eventId", event.id)
                             putExtra("EVENT_ID", event.id)
@@ -105,12 +95,10 @@ class AdminEventAdapter(
                     }
                 }
 
-                // FIXED: Edit button click listener
                 btnEdit.setOnClickListener {
                     try {
-                        onEditClick(event) // Use callback instead of direct intent
+                        onEditClick(event)
                     } catch (e: Exception) {
-                        // Fallback to direct intent if callback fails
                         val context = binding.root.context
                         val intent = Intent(context, EditEventActivity::class.java).apply {
                             putExtra("eventId", event.id)
@@ -121,7 +109,6 @@ class AdminEventAdapter(
                     }
                 }
 
-                // FIXED: Delete button click listener (was incorrectly mapped to edit button)
                 btnDelete?.setOnClickListener {
                     onDeleteClick(event)
                 }

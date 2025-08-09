@@ -98,10 +98,9 @@ class AdminEventListFragment : Fragment() {
     }
 
     private fun setupFilterChips() {
-        // Clear existing chips
+
         binding.chipGroupFilters.removeAllViews()
 
-        // Add "All" chip
         val allChip = Chip(requireContext()).apply {
             text = "All"
             isCheckable = true
@@ -116,7 +115,6 @@ class AdminEventListFragment : Fragment() {
         }
         binding.chipGroupFilters.addView(allChip)
 
-        // Add category chips
         EventCategory.values().forEach { category ->
             val chip = Chip(requireContext()).apply {
                 text = category.displayName
@@ -209,7 +207,6 @@ class AdminEventListFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        // Refresh events when fragment becomes visible again
         Log.d(TAG, "Fragment resumed, refreshing events")
         viewModel.refreshEvents()
     }

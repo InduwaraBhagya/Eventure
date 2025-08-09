@@ -40,11 +40,9 @@ class AdminEventDetailActivity : AppCompatActivity() {
             binding = ActivityAdminEventDetailBinding.inflate(layoutInflater)
             setContentView(binding.root)
 
-            // Initialize ViewModel with FirebaseFirestore instance
             val firestore = FirebaseFirestore.getInstance()
             viewModel = EventManagementViewModel(firestore)
 
-            // Get event ID from intent with multiple fallback keys
             eventId = intent.getStringExtra("eventId")
                 ?: intent.getStringExtra("EVENT_ID")
                         ?: intent.getStringExtra(AdminConstants.EXTRA_EVENT_ID)
@@ -63,10 +61,8 @@ class AdminEventDetailActivity : AppCompatActivity() {
             setupButtonListeners()
             observeViewModel()
 
-            // Show loading initially
             binding.progressBar.visibility = View.VISIBLE
 
-            // Load event data
             viewModel.loadEvent(eventId!!)
 
         } catch (e: Exception) {
@@ -130,7 +126,6 @@ class AdminEventDetailActivity : AppCompatActivity() {
             } else {
                 Log.e(TAG, "Received null event")
                 showSnackbar("Event not found")
-                // Don't finish immediately, wait a bit for user to see the message
                 binding.root.postDelayed({ finish() }, 2000)
             }
         }
@@ -170,7 +165,6 @@ class AdminEventDetailActivity : AppCompatActivity() {
                 tvEventTime.text = event.time
                 tvEventOrganizer.text = event.organizer ?: "Unknown"
 
-                // Category
                 val categoryDisplayName = when (event.category.uppercase()) {
                     "MUSICAL" -> "Musical"
                     "SPORTS" -> "Sports"
@@ -181,14 +175,12 @@ class AdminEventDetailActivity : AppCompatActivity() {
                 chipCategory.text = categoryDisplayName
                 chipCategory.setChipBackgroundColorResource(getCategoryColor(event.category))
 
-                // Event status
                 val isUpcoming = DateUtils.isEventUpcoming(event.date)
                 tvEventStatus.text = if (isUpcoming) "UPCOMING" else "PAST"
                 tvEventStatus.setBackgroundColor(
                     getColor(if (isUpcoming) R.color.status_upcoming else R.color.status_past)
                 )
 
-                // Images
                 if (event.imageUrls.isNotEmpty()) {
                     imageAdapter.updateImages(event.imageUrls)
                     recyclerViewImages.visibility = View.VISIBLE
@@ -198,15 +190,12 @@ class AdminEventDetailActivity : AppCompatActivity() {
                     tvNoImages?.visibility = View.VISIBLE
                 }
 
-                // Contact info
                 tvContactEmail?.text = event.contactEmail ?: "Not provided"
                 tvContactPhone?.text = event.contactPhone ?: "Not provided"
 
-                // Timestamps
                 tvCreatedAt?.text = "Created: ${DateUtils.formatTimestamp(event.createdAt)}"
                 tvUpdatedAt?.text = "Updated: ${DateUtils.formatTimestamp(event.updatedAt)}"
 
-                // Statistics
                 tvMaxAttendees?.text = event.maxAttendees?.toString() ?: "0"
                 tvCurrentAttendees?.text = event.currentAttendees?.toString() ?: "0"
                 val ticketPrice = event.ticketPrice

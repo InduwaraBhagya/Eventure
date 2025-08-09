@@ -31,7 +31,6 @@ object EventValidation {
             return "Invalid time format. Use HH:MM format"
         }
 
-        // Split and parse time
         val timeParts = time.split(":")
         if (timeParts.size != 2) return "Invalid time format"
 
@@ -39,7 +38,7 @@ object EventValidation {
         val minute = timeParts[1].toIntOrNull() ?: return "Invalid minute value"
 
         val eventCalendar = Calendar.getInstance().apply {
-            timeInMillis = date.toDate().time // ✅ Fixed this line
+            timeInMillis = date.toDate().time
             set(Calendar.HOUR_OF_DAY, hour)
             set(Calendar.MINUTE, minute)
             set(Calendar.SECOND, 0)

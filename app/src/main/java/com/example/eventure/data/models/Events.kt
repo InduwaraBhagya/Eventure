@@ -27,7 +27,7 @@ data class Event(
     val contactPhone: String = "",
     val tags: List<String> = emptyList()
 ) : Serializable {
-    // No-argument constructor for Firestore
+
     constructor() : this("")
 
     fun toMap(): Map<String, Any> {

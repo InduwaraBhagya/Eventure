@@ -48,7 +48,7 @@ class AdminEventRepository @Inject constructor(
             if (eventResult.isSuccess) {
                 val event = eventResult.getOrNull()
                 if (event != null) {
-                    // Create a new event with no id (Firestore will generate new id)
+
                     val newEvent = event.copy(id = "")
                     createEvent(newEvent)
                     Result.success(Unit)
@@ -144,8 +144,7 @@ class AdminEventRepository @Inject constructor(
 
     suspend fun addEvent(event: Event, imageUris: List<Uri>): Boolean {
         return try {
-            // You can extend this to upload images and get URLs
-            // For now, just save event data
+
             createEvent(event)
             true
         } catch (e: Exception) {
@@ -155,7 +154,7 @@ class AdminEventRepository @Inject constructor(
 
     suspend fun saveDraftEvent(event: Event, imageUris: List<Uri>): Boolean {
         return try {
-            // Mark event as draft, e.g., set status = "draft"
+
             val draftEvent = event.copy(status = "draft")
             createEvent(draftEvent)
             true
