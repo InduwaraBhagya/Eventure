@@ -49,7 +49,7 @@
         <!-- Category Chip -->
         <com.google.android.material.chip.Chip
             android:id="@+id/chipCategory"
-            style="@style/Widget.MaterialComponents.Chip.Entry"
+            style="@style/Widget.MaterialComponents.ChipGroup"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="@android:color/white"
@@ -68,11 +68,11 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="12dp"
             android:layout_marginTop="4dp"
-            android:textColor="@color/admin_text_secondary"
+            android:textColor="@color/gray"
             android:textSize="13sp"
             android:drawablePadding="6dp"
             app:drawableStartCompat="@drawable/baseline_location_on_24"
-            app:drawableTint="@color/admin_text_secondary"
+            app:drawableTint="#2196F3"
             android:ellipsize="end"
             android:maxLines="1"
             app:layout_constraintStart_toEndOf="@id/EventImage"
@@ -87,14 +87,13 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="12dp"
             android:layout_marginTop="4dp"
-            android:textColor="@color/admin_text_secondary"
+            android:textColor="@color/gray"
             android:textSize="13sp"
             android:drawablePadding="6dp"
             app:drawableStartCompat="@drawable/baseline_calendar_month_24"
-            app:drawableTint="@color/admin_text_secondary"
+            app:drawableTint="#2196F3"
             app:layout_constraintStart_toEndOf="@id/EventImage"
             app:layout_constraintTop_toBottomOf="@id/EventLocation"
-            app:layout_constraintEnd_toStartOf="@id/viewStatusIndicator"
             tools:text="August 10, 2025 • 6:00 PM" />
 
         <!-- Event Status -->
@@ -104,7 +103,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
             android:text="Status"
-            android:textSize="12sp"
+            android:textStyle="bold"
             android:textColor="@color/status_upcoming"
             app:layout_constraintTop_toBottomOf="@id/EventDate"
             app:layout_constraintStart_toStartOf="@id/EventDate"
@@ -128,39 +127,29 @@
             android:id="@+id/buttonEdit"
             android:layout_width="32dp"
             android:layout_height="32dp"
-            android:layout_marginTop="4dp"
-            android:layout_marginEnd="40dp"
+            android:layout_marginTop="36dp"
+            android:layout_marginEnd="4dp"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:contentDescription="Edit"
             android:src="@drawable/baseline_edit_24"
-            app:tint="@color/admin_text_secondary"
-            app:layout_constraintTop_toBottomOf="@id/chipCategory"
-            app:layout_constraintEnd_toStartOf="@id/btnMenu" />
+            app:layout_constraintEnd_toStartOf="@id/btnMenu"
+            app:layout_constraintBottom_toBottomOf="@id/textViewParticipantCount"
+            app:tint="@color/admin_primary" />
 
         <!-- Delete Button -->
         <ImageButton
             android:id="@+id/buttonDelete"
             android:layout_width="32dp"
             android:layout_height="32dp"
-            android:layout_marginTop="4dp"
-            android:layout_marginEnd="8dp"
+            android:layout_marginTop="36dp"
+            android:layout_marginEnd="4dp"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:contentDescription="Delete"
             android:src="@drawable/baseline_delete_24"
-            app:tint="@color/admin_text_secondary"
-            app:layout_constraintTop_toBottomOf="@id/chipCategory"
-            app:layout_constraintEnd_toStartOf="@id/buttonEdit" />
+            app:layout_constraintEnd_toStartOf="@id/buttonEdit"
+            app:layout_constraintBottom_toBottomOf="@id/textViewParticipantCount"
+            app:tint="@color/admin_error"/>
 
-        <!-- Status Dot -->
-        <View
-            android:id="@+id/viewStatusIndicator"
-            android:layout_width="10dp"
-            android:layout_height="10dp"
-            android:layout_marginTop="4dp"
-            android:layout_marginEnd="4dp"
-            android:background="@drawable/shape_circle"
-            app:layout_constraintTop_toBottomOf="@id/chipCategory"
-            app:layout_constraintEnd_toStartOf="@id/btnMenu" />
 
         <View
             android:id="@+id/viewCategoryIndicator"
@@ -176,13 +165,13 @@
             android:id="@+id/btnMenu"
             android:layout_width="32dp"
             android:layout_height="32dp"
-            android:layout_marginTop="4dp"
+            android:layout_marginTop="36dp"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:contentDescription="more_options"
             android:src="@drawable/baseline_more_vert_24"
-            app:tint="@color/admin_text_secondary"
-            app:layout_constraintTop_toBottomOf="@id/chipCategory"
-            app:layout_constraintEnd_toEndOf="parent" />
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toBottomOf="@id/textViewParticipantCount"
+            app:tint="@color/admin_text_primary"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

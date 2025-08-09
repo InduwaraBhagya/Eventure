@@ -22,16 +22,21 @@ class AdminFirestoreOperations @Inject constructor(
             val totalEvents = eventsCollection.get().await().size()
 
             // Get events by category
-            val categories = listOf("Musical", "Sports", "Food", "Art")
+            val categories = mapOf(
+                "Musical" to "MUSICAL",
+                "Sports" to "SPORTS",
+                "Food" to "FOOD",
+                "Art" to "ART"
+            )
             val categoryData = mutableMapOf<String, Int>()
 
-            categories.forEach { category ->
+            categories.forEach { (displayName, firestoreValue) ->
                 val count = eventsCollection
-                    .whereEqualTo("category", category)
+                    .whereEqualTo("category", firestoreValue)
                     .get()
                     .await()
                     .size()
-                categoryData[category] = count
+                categoryData[displayName] = count
             }
 
             // Get active events count

@@ -1,5 +1,6 @@
 package com.example.eventure.ui.adapters
 
+import android.content.Intent
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
@@ -37,9 +38,8 @@ class AdminEventListAdapter(
         fun bind(event: Event) {
             binding.apply {
                 EventName.text = event.name
-                EventDate.text = "${event.date} at ${event.time}"
+                EventDate.text = DateUtils.formatTimestamp(event.date)
                 EventLocation.text = event.location
-                chipCategory.text = event.category
 
                 // Load thumbnail image
                 if (event.imageUrls.isNotEmpty()) {
@@ -62,18 +62,22 @@ class AdminEventListAdapter(
                 }
                 chipCategory.text = categoryDisplayName
 
-                // Set category indicator color
-                val categoryColor = when (event.category) {
-                    "MUSICAL" -> R.color.category_musical
-                    "SPORTS" -> R.color.category_sports
+                // Set category indicator color and chip background
+                val categoryColor = when (event.category.uppercase()) {
+                    "MUSICAL" -> R.color.admin_theme
+                    "SPORTS" -> R.color.admin_theme
                     "FOOD" -> R.color.category_food
-                    "ART" -> R.color.category_art
+                    "ART" -> R.color.admin_theme
                     else -> R.color.category_default
                 }
+
+                // Set category indicator color
                 viewCategoryIndicator.setBackgroundColor(
                     binding.root.context.getColor(categoryColor)
                 )
 
+                // Set chip background color
+                chipCategory.setChipBackgroundColorResource(categoryColor)
                 // Set event status
                 val isUpcoming = DateUtils.isEventUpcoming(event.date)
                 textViewEventStatus.text = if (isUpcoming) "Upcoming" else "Past"

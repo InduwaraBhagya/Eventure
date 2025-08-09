@@ -46,13 +46,13 @@
             <!-- Floating Action Button -->
             <com.google.android.material.floatingactionbutton.FloatingActionButton
                 android:id="@+id/fabAddEvent"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="16dp"
+                android:layout_width="51dp"
+                android:layout_height="36dp"
                 android:layout_gravity="bottom|end"
+                android:layout_margin="16dp"
+                android:backgroundTint="@color/admin_theme"
                 android:contentDescription="@string/add_event"
                 android:src="@drawable/baseline_add_circle_24"
-                android:backgroundTint="@color/admin_accent"
                 app:tint="@android:color/white"
                 tools:ignore="MissingConstraints" />
 

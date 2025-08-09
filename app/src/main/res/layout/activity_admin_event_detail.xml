@@ -79,17 +79,18 @@
 
                         <com.google.android.material.chip.Chip
                             android:id="@+id/chip_category"
+                            style="@style/Widget.MaterialComponents.Chip.Choice"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Category"
-                            style="@style/Widget.MaterialComponents.Chip.Choice"
                             android:layout_marginTop="8dp"
+                            android:text="Category"
                             app:chipCornerRadius="8dp" />
 
                         <TextView
                             android:id="@+id/tv_event_status"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:layout_marginTop="10dp"
                             android:layout_marginStart="8dp"
                             android:background="@color/status_upcoming"
                             android:padding="8dp"
@@ -144,7 +145,7 @@
                             android:layout_width="24dp"
                             android:layout_height="24dp"
                             android:src="@drawable/baseline_calendar_month_24"
-                            app:tint="@color/colorPrimary" />
+                            app:tint="@color/admin_accent" />
 
                         <LinearLayout
                             android:layout_width="match_parent"
@@ -187,7 +188,7 @@
                             android:layout_width="24dp"
                             android:layout_height="24dp"
                             android:src="@drawable/baseline_location_on_24"
-                            app:tint="@color/colorPrimary" />
+                            app:tint="@color/admin_accent" />
 
                         <LinearLayout
                             android:layout_width="match_parent"
@@ -224,7 +225,7 @@
                             android:layout_width="24dp"
                             android:layout_height="24dp"
                             android:src="@drawable/baseline_person_24"
-                            app:tint="@color/colorPrimary" />
+                            app:tint="@color/admin_accent" />
 
                         <LinearLayout
                             android:layout_width="match_parent"
@@ -407,7 +408,7 @@
                                 android:id="@+id/tv_ticket_price"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="$25"
+                                android:text="Rs.25"
                                 android:textColor="@color/colorPrimary"
                                 android:textSize="20sp"
                                 android:textStyle="bold" />
@@ -467,13 +468,14 @@
 
                 <Button
                     android:id="@+id/btn_edit_event"
-                    style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                    style="@style/Widget.AppCompat.Button"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="8dp"
                     android:layout_weight="1"
                     android:text="Edit Event"
-                    app:icon="@drawable/baseline_edit_24" />
+                    app:icon="@drawable/baseline_edit_24"
+                    app:tint="@color/admin_accent"/>
 
                 <Button
                     android:id="@+id/btn_toggle_status"
