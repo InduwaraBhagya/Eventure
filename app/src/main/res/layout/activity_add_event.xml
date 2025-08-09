@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     tools:context=".ui.admin.AddEventActivity">
 
-    <!-- Existing AppBar and Toolbar -->
+
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -31,7 +31,6 @@
             android:orientation="vertical"
             android:padding="16dp">
 
-            <!-- Existing fields: Event Name, Description, Date, Time -->
             <com.google.android.material.textfield.TextInputLayout
                 android:hint="Event Name"
                 android:layout_width="match_parent"
@@ -84,85 +83,122 @@
                     android:clickable="true" />
             </com.google.android.material.textfield.TextInputLayout>
 
-        <!-- Payment Type Selection -->
-        <TextView
-            android:id="@+id/textPaymentTypeLabel"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Select Payment Type*"
-            android:textSize="16sp"
-            android:textStyle="bold"
-            android:textColor="#000000"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginBottom="8dp" />
-
-        <LinearLayout
-            android:id="@+id/paymentTypeGroup"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginHorizontal="16dp"
-            android:layout_marginBottom="8dp">
-
-            <Button
-                android:id="@+id/btnFree"
-                android:layout_width="0dp"
-                android:layout_height="50dp"
-                android:layout_weight="1"
-                android:text="Free"
-                android:backgroundTint="@color/admin_theme"
-                android:textColor="@android:color/white"
-                android:textAllCaps="false"
-                android:layout_marginEnd="8dp" />
-
-            <Button
-                android:id="@+id/btnPaid"
-                android:layout_width="0dp"
-                android:layout_height="50dp"
-                android:layout_weight="1"
-                android:text="Paid"
-                android:backgroundTint="@color/admin_theme"
-                android:textColor="@android:color/white"
-                android:textAllCaps="false" />
-        </LinearLayout>
-
-        <!-- Ticket Price Field (initially hidden) -->
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/eventPriceLayout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Ticket Price (LKR)*"
-            android:visibility="gone"
-            android:layout_marginHorizontal="16dp"
-            android:layout_marginBottom="16dp">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/editTicketPrice"
+            <com.google.android.material.textfield.TextInputLayout
+                android:hint="Organizer Name"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:inputType="numberDecimal" />
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:padding="16dp">
-
-            <com.google.android.material.textfield.TextInputLayout
-                android:hint="Location"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:layout_marginEnd="8dp">
+                android:orientation="vertical"
+                android:padding="16dp">
                 <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/editTextEventLocation"
+                    android:id="@+id/editTextOrganizerName"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:imeOptions="actionSearch"
-                    android:inputType="textCapWords" />
+                    android:inputType="textPersonName" />
             </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:hint="Organizer Email"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp">
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/editTextOrganizerEmail"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="textEmailAddress" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:hint="Organizer Contact"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp">
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/editTextOrganizerContact"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="phone" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <TextView
+                android:id="@+id/textPaymentTypeLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Select Payment Type*"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:textColor="#000000"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="8dp" />
+
+            <LinearLayout
+                android:id="@+id/paymentTypeGroup"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginHorizontal="16dp"
+                android:layout_marginBottom="8dp">
+
+                <Button
+                    android:id="@+id/btnFree"
+                    android:layout_width="0dp"
+                    android:layout_height="50dp"
+                    android:layout_weight="1"
+                    android:text="Free"
+                    android:backgroundTint="@color/admin_theme"
+                    android:textColor="@android:color/white"
+                    android:textAllCaps="false"
+                    android:layout_marginEnd="8dp" />
+
+                <Button
+                    android:id="@+id/btnPaid"
+                    android:layout_width="0dp"
+                    android:layout_height="50dp"
+                    android:layout_weight="1"
+                    android:text="Paid"
+                    android:backgroundTint="@color/admin_theme"
+                    android:textColor="@android:color/white"
+                    android:textAllCaps="false" />
+            </LinearLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/eventPriceLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Ticket Price (LKR)*"
+                android:visibility="gone"
+                android:layout_marginHorizontal="16dp"
+                android:layout_marginBottom="16dp">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/editTicketPrice"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="numberDecimal" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:padding="16dp">
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:hint="Location"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginEnd="8dp">
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/editTextEventLocation"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:imeOptions="actionSearch"
+                        android:inputType="textCapWords" />
+                </com.google.android.material.textfield.TextInputLayout>
 
                 <Button
                     android:id="@+id/buttonSearchLocation"
@@ -179,7 +215,6 @@
                     android:layout_marginStart="8dp" />
             </LinearLayout>
 
-            <!-- Rest of your existing layout -->
             <androidx.cardview.widget.CardView
                 android:id="@+id/mapContainer"
                 android:layout_width="match_parent"

@@ -10,6 +10,7 @@ import android.location.Geocoder
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
+import android.util.Patterns
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -37,6 +38,7 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.material.chip.Chip
 import com.google.firebase.Timestamp
+import com.google.firebase.auth.FirebaseAuth
 import dagger.hilt.android.AndroidEntryPoint
 import java.io.File
 import java.io.FileOutputStream
@@ -457,12 +459,24 @@ class AddEventActivity : AppCompatActivity(), OnMapReadyCallback {
         ).show()
     }
 
+    private fun isValidEmail(email: String): Boolean {
+        return email.isNotEmpty() && Patterns.EMAIL_ADDRESS.matcher(email).matches()
+    }
+
+    private fun isValidPhoneNumber(phone: String): Boolean {
+        return phone.isNotEmpty() && phone.length >= 10 && phone.all { it.isDigit() || it == '+' || it == '-' || it == ' ' }
+    }
+
     private fun validateInputs(): Boolean {
         val eventName = binding.editTextEventName.text.toString().trim()
         val eventDescription = binding.editTextEventDescription.text.toString().trim()
         val eventLocation = binding.editTextEventLocation.text.toString().trim()
         val eventDateStr = binding.editTextEventDate.text.toString()
         val eventTimeStr = binding.editTextEventTime.text.toString()
+
+        val organizerName = binding.editTextOrganizerName.text.toString().trim()
+        val organizerEmail = binding.editTextOrganizerEmail.text.toString().trim()
+        val organizerContact = binding.editTextOrganizerContact.text.toString().trim()
 
         when {
             eventName.isEmpty() -> {
@@ -488,6 +502,31 @@ class AddEventActivity : AppCompatActivity(), OnMapReadyCallback {
             eventTimeStr.isEmpty() -> {
                 binding.editTextEventTime.error = "Time is required"
                 Toast.makeText(this, "Please select event time", Toast.LENGTH_SHORT).show()
+                return false
+            }
+            organizerName.isEmpty() -> {
+                binding.editTextOrganizerName.error = "Organizer name is required"
+                binding.editTextOrganizerName.requestFocus()
+                return false
+            }
+            organizerEmail.isEmpty() -> {
+                binding.editTextOrganizerEmail.error = "Organizer email is required"
+                binding.editTextOrganizerEmail.requestFocus()
+                return false
+            }
+            !isValidEmail(organizerEmail) -> {
+                binding.editTextOrganizerEmail.error = "Please enter a valid email address"
+                binding.editTextOrganizerEmail.requestFocus()
+                return false
+            }
+            organizerContact.isEmpty() -> {
+                binding.editTextOrganizerContact.error = "Organizer contact is required"
+                binding.editTextOrganizerContact.requestFocus()
+                return false
+            }
+            !isValidPhoneNumber(organizerContact) -> {
+                binding.editTextOrganizerContact.error = "Please enter a valid phone number"
+                binding.editTextOrganizerContact.requestFocus()
                 return false
             }
             selectedCategory == null -> {
@@ -523,23 +562,39 @@ class AddEventActivity : AppCompatActivity(), OnMapReadyCallback {
         val eventLocation = binding.editTextEventLocation.text.toString().trim()
         val eventTimeStr = binding.editTextEventTime.text.toString()
 
+        // Get organizer information
+        val organizerName = binding.editTextOrganizerName.text.toString().trim()
+        val organizerEmail = binding.editTextOrganizerEmail.text.toString().trim()
+        val organizerContact = binding.editTextOrganizerContact.text.toString().trim()
+
         val ticketPrice = if (isPaymentTypePaid) {
             binding.editTicketPrice.text.toString().trim().toDouble()
         } else {
             0.0
         }
 
+        val currentUserId = FirebaseAuth.getInstance().currentUser?.uid ?: "unknown"
+
         val event = Event(
             name = eventName,
             description = eventDescription,
+            category = selectedCategory!!,
             date = Timestamp(selectedDate.time),
             time = eventTimeStr,
             location = eventLocation,
-            category = selectedCategory!!,
+            imageUrls = emptyList(),
+            participantCount = null,
+            createdBy = currentUserId,
+            createdAt = Timestamp.now(),
+            updatedAt = Timestamp.now(),
+            status = "active",
             maxAttendees = 100,
+            currentAttendees = 0,
             ticketPrice = ticketPrice,
-            contactEmail = "default@email.com",
-            contactPhone = "0000000000"
+            organizer = organizerName,
+            contactEmail = organizerEmail,
+            contactPhone = organizerContact,
+            tags = emptyList()
         )
 
         viewModel.saveEvent(event, selectedImageUris)
@@ -572,6 +627,12 @@ class AddEventActivity : AppCompatActivity(), OnMapReadyCallback {
             editTextEventDate.text?.clear()
             editTextEventTime.text?.clear()
             editTicketPrice.text?.clear()
+
+            // Clear organizer fields
+            editTextOrganizerName.text?.clear()
+            editTextOrganizerEmail.text?.clear()
+            editTextOrganizerContact.text?.clear()
+
             chipGroupCategories.clearCheck()
             selectedCategory = null
             selectedImageUris.clear()
@@ -582,7 +643,6 @@ class AddEventActivity : AppCompatActivity(), OnMapReadyCallback {
             selectedLocation = null
             selectedAddress = ""
             mapContainer.visibility = View.GONE
-
 
             selectPaymentType(false)
         }
