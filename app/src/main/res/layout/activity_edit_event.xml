@@ -38,8 +38,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="16dp"
                 android:hint="@string/event_name"
-                app:boxStrokeColor="@color/admin_primary"
-                app:hintTextColor="@color/admin_primary">
+                app:boxStrokeColor="@color/admin_theme"
+                app:hintTextColor="@color/admin_theme">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/editTextEventName"
@@ -56,8 +56,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="16dp"
                 android:hint="@string/event_description"
-                app:boxStrokeColor="@color/admin_primary"
-                app:hintTextColor="@color/admin_primary">
+                app:boxStrokeColor="@color/admin_theme"
+                app:hintTextColor="@color/admin_theme">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/editTextEventDescription"
@@ -75,8 +75,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="16dp"
                 android:hint="@string/event_location"
-                app:boxStrokeColor="@color/admin_primary"
-                app:hintTextColor="@color/admin_primary">
+                app:boxStrokeColor="@color/admin_theme"
+                app:hintTextColor="@color/admin_theme">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/editTextEventLocation"
@@ -101,8 +101,8 @@
                     android:layout_marginEnd="8dp"
                     android:layout_weight="1"
                     android:hint="@string/event_date"
-                    app:boxStrokeColor="@color/admin_primary"
-                    app:hintTextColor="@color/admin_primary"
+                    app:boxStrokeColor="@color/admin_theme"
+                    app:hintTextColor="@color/admin_theme"
                     app:endIconDrawable="@drawable/baseline_calendar_month_24"
                     app:endIconMode="custom">
 
@@ -123,8 +123,8 @@
                     android:layout_marginStart="8dp"
                     android:layout_weight="1"
                     android:hint="@string/event_time"
-                    app:boxStrokeColor="@color/admin_primary"
-                    app:hintTextColor="@color/admin_primary"
+                    app:boxStrokeColor="@color/admin_theme"
+                    app:hintTextColor="@color/admin_theme"
                     app:endIconDrawable="@drawable/baseline_access_time_24"
                     app:endIconMode="custom">
 
@@ -146,7 +146,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="16dp"
                 android:hint="@string/event_category"
-                app:boxStrokeColor="@color/admin_primary"
+                app:boxStrokeColor="@color/admin_theme"
                 app:hintTextColor="@color/admin_primary">
 
                 <TextView

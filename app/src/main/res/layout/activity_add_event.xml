@@ -82,18 +82,58 @@
                     android:clickable="true" />
             </com.google.android.material.textfield.TextInputLayout>
 
-            <com.google.android.material.textfield.TextInputLayout
-                android:hint="Location"
+
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
+                android:orientation="horizontal"
                 android:padding="16dp">
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/editTextEventLocation"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
-            </com.google.android.material.textfield.TextInputLayout>
 
+                <com.google.android.material.textfield.TextInputLayout
+                    android:hint="Location"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginEnd="8dp">
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/editTextEventLocation"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:imeOptions="actionSearch"
+                        android:inputType="textCapWords" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <Button
+                    android:id="@+id/buttonSearchLocation"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Search"
+                    android:minWidth="80dp"
+                    android:backgroundTint="@color/admin_theme"
+                    android:textColor="@android:color/white"
+                    android:textStyle="bold"
+                    android:elevation="4dp"
+                    android:paddingStart="16dp"
+                    android:paddingEnd="16dp"
+                    android:layout_marginStart="8dp" />
+            </LinearLayout>
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/mapContainer"
+                android:layout_width="match_parent"
+                android:layout_height="200dp"
+                android:layout_marginHorizontal="16dp"
+                android:layout_marginBottom="16dp"
+                android:visibility="gone"
+                app:cardCornerRadius="8dp"
+                app:cardElevation="4dp">
+
+                <FrameLayout
+                    android:id="@+id/mapFrame"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" />
+
+            </androidx.cardview.widget.CardView>
 
             <com.google.android.material.chip.ChipGroup
                 android:id="@+id/chipGroupCategories"
@@ -101,7 +141,6 @@
                 android:layout_height="wrap_content"
                 app:singleSelection="true"
                 android:layout_marginBottom="16dp" />
-
 
             <TextView
                 android:id="@+id/textViewImageCount"
@@ -115,7 +154,9 @@
                 android:id="@+id/buttonSelectImages"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Select Images" />
+                android:text="Select Images"
+                android:backgroundTint="@color/admin_theme"
+                android:textColor="@android:color/white"/>
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/recyclerViewImages"
@@ -123,7 +164,6 @@
                 android:layout_height="100dp"
                 android:layout_marginTop="8dp"
                 android:contentDescription="Selected images list"/>
-
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -137,14 +177,18 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="Cancel" />
+                    android:text="Cancel"
+                    android:backgroundTint="@color/admin_theme"
+                    android:textColor="@android:color/white"/>
 
                 <Button
                     android:id="@+id/buttonSaveEvent"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="Save Event" />
+                    android:text="Save Event"
+                    android:backgroundTint="@color/admin_theme"
+                    android:textColor="@android:color/white"/>
             </LinearLayout>
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>

@@ -5,6 +5,8 @@ import android.app.DatePickerDialog
 import android.app.TimePickerDialog
 import android.content.Intent
 import android.graphics.Bitmap
+import android.location.Address
+import android.location.Geocoder
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
@@ -26,17 +28,22 @@ import com.example.eventure.databinding.ActivityAddEventBinding
 import com.example.eventure.ui.adapters.ImagePreviewAdapter
 import com.example.eventure.utils.DateUtils
 import com.example.eventure.viewmodels.AddEventViewModel
+import com.google.android.gms.maps.CameraUpdateFactory
+import com.google.android.gms.maps.GoogleMap
+import com.google.android.gms.maps.OnMapReadyCallback
+import com.google.android.gms.maps.SupportMapFragment
+import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.material.chip.Chip
 import com.google.firebase.Timestamp
 import dagger.hilt.android.AndroidEntryPoint
 import java.io.File
 import java.io.FileOutputStream
-import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.*
 
 @AndroidEntryPoint
-class AddEventActivity : AppCompatActivity() {
+class AddEventActivity : AppCompatActivity(), OnMapReadyCallback {
 
     private lateinit var binding: ActivityAddEventBinding
     private val viewModel: AddEventViewModel by viewModels()
@@ -44,6 +51,13 @@ class AddEventActivity : AppCompatActivity() {
     private val selectedImageUris = mutableListOf<Uri>()
     private var selectedCategory: String? = null
     private var selectedDate: Calendar = Calendar.getInstance()
+
+    private var googleMap: GoogleMap? = null
+    private var selectedLocation: LatLng? = null
+    private var selectedAddress: String = ""
+    private lateinit var geocoder: Geocoder
+    private var isMapReady = false
+    private var mapFragment: SupportMapFragment? = null
 
     private lateinit var pickImageFromGalleryLauncher: ActivityResultLauncher<Intent>
     private lateinit var takePictureLauncher: ActivityResultLauncher<Intent>
@@ -59,6 +73,10 @@ class AddEventActivity : AppCompatActivity() {
         setupClickListeners()
         initializeActivityLaunchers()
         observeViewModel()
+
+        geocoder = Geocoder(this, Locale.getDefault())
+        binding.mapContainer.visibility = View.GONE
+        setupMapFragment()
     }
 
     private fun setupToolbar() {
@@ -113,12 +131,160 @@ class AddEventActivity : AppCompatActivity() {
         }
     }
 
+    private fun setupMapFragment() {
+
+        mapFragment = SupportMapFragment.newInstance()
+        mapFragment?.getMapAsync(this)
+    }
+
     private fun setupClickListeners() {
         binding.editTextEventDate.setOnClickListener { showDatePicker() }
         binding.editTextEventTime.setOnClickListener { showTimePicker() }
         binding.buttonSelectImages.setOnClickListener { showImagePickerDialog() }
         binding.buttonSaveEvent.setOnClickListener { submitEvent() }
         binding.buttonCancel.setOnClickListener { finish() }
+
+        binding.editTextEventLocation.setOnEditorActionListener { _, _, _ ->
+            val location = binding.editTextEventLocation.text.toString().trim()
+            if (location.isNotEmpty()) {
+                searchLocation(location)
+            }
+            true
+        }
+
+        binding.buttonSearchLocation.setOnClickListener {
+            val location = binding.editTextEventLocation.text.toString().trim()
+            if (location.isNotEmpty()) {
+                searchLocation(location)
+            } else {
+                Toast.makeText(this, "Please enter a location to search", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
+    override fun onMapReady(map: GoogleMap) {
+        googleMap = map
+        isMapReady = true
+
+        val defaultLocation = LatLng(6.9271, 79.8612)
+        googleMap?.moveCamera(CameraUpdateFactory.newLatLngZoom(defaultLocation, 10f))
+
+        googleMap?.setOnMapClickListener { latLng ->
+            selectLocationOnMap(latLng)
+        }
+
+        googleMap?.uiSettings?.isZoomControlsEnabled = true
+        googleMap?.uiSettings?.isMapToolbarEnabled = true
+
+        selectedLocation?.let { location ->
+            selectLocationOnMap(location)
+        }
+    }
+
+    private fun searchLocation(locationName: String) {
+        try {
+            binding.buttonSearchLocation.isEnabled = false
+            binding.buttonSearchLocation.text = "Searching..."
+
+            val addresses = geocoder.getFromLocationName(locationName, 1)
+            if (addresses?.isNotEmpty() == true) {
+                val address = addresses[0]
+                val latLng = LatLng(address.latitude, address.longitude)
+
+
+                selectedLocation = latLng
+                selectedAddress = getFullAddress(address)
+                binding.editTextEventLocation.setText(selectedAddress)
+
+
+                showMapWithLocation(latLng)
+
+                Toast.makeText(this, "Location found and selected on map", Toast.LENGTH_SHORT).show()
+            } else {
+                Toast.makeText(this, "Location not found. Please try a different search term.", Toast.LENGTH_SHORT).show()
+            }
+        } catch (e: Exception) {
+            Toast.makeText(this, "Error searching location: ${e.message}", Toast.LENGTH_SHORT).show()
+        } finally {
+
+            binding.buttonSearchLocation.isEnabled = true
+            binding.buttonSearchLocation.text = "Search"
+        }
+    }
+
+    private fun showMapWithLocation(latLng: LatLng) {
+
+        if (mapFragment != null && !mapFragment!!.isAdded) {
+            supportFragmentManager.beginTransaction()
+                .replace(R.id.mapFrame, mapFragment!!)
+                .commitAllowingStateLoss()
+        }
+
+
+        showMapWithAnimation()
+
+        if (isMapReady) {
+            selectLocationOnMap(latLng)
+        }
+    }
+
+    private fun showMapWithAnimation() {
+        if (binding.mapContainer.visibility != View.VISIBLE) {
+            binding.mapContainer.visibility = View.VISIBLE
+            binding.mapContainer.alpha = 0f
+            binding.mapContainer.animate()
+                .alpha(1f)
+                .setDuration(300)
+                .start()
+        }
+    }
+
+    private fun selectLocationOnMap(latLng: LatLng) {
+        if (!isMapReady || googleMap == null) {
+
+            selectedLocation = latLng
+            return
+        }
+
+        selectedLocation = latLng
+
+        googleMap?.clear()
+        googleMap?.addMarker(
+            MarkerOptions()
+                .position(latLng)
+                .title("Event Location")
+                .snippet("Selected location for the event")
+        )
+        googleMap?.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15f))
+
+        // If location text is empty, reverse geocode to get address
+        if (binding.editTextEventLocation.text.toString().trim().isEmpty()) {
+            reverseGeocode(latLng)
+        }
+    }
+
+    private fun reverseGeocode(latLng: LatLng) {
+        try {
+            val addresses = geocoder.getFromLocation(latLng.latitude, latLng.longitude, 1)
+            if (addresses?.isNotEmpty() == true) {
+                selectedAddress = getFullAddress(addresses[0])
+                binding.editTextEventLocation.setText(selectedAddress)
+            }
+        } catch (e: Exception) {
+            selectedAddress = "Selected Location: ${String.format("%.6f", latLng.latitude)}, ${String.format("%.6f", latLng.longitude)}"
+            binding.editTextEventLocation.setText(selectedAddress)
+        }
+    }
+
+    private fun getFullAddress(address: Address): String {
+        val addressText = StringBuilder()
+
+        for (i in 0..address.maxAddressLineIndex) {
+            if (i > 0) addressText.append(", ")
+            addressText.append(address.getAddressLine(i))
+        }
+
+        return addressText.toString()
     }
 
     private fun initializeActivityLaunchers() {
@@ -141,7 +307,6 @@ class AddEventActivity : AppCompatActivity() {
             }
         }
 
-        // Gallery
         pickImageFromGalleryLauncher = registerForActivityResult(
             ActivityResultContracts.StartActivityForResult()
         ) { result ->
@@ -259,7 +424,8 @@ class AddEventActivity : AppCompatActivity() {
         val eventDateStr = binding.editTextEventDate.text.toString()
         val eventTimeStr = binding.editTextEventTime.text.toString()
 
-        if (eventName.isEmpty() || eventDescription.isEmpty() || eventLocation.isEmpty() || eventDateStr.isEmpty() || eventTimeStr.isEmpty() || selectedCategory == null) {
+        if (eventName.isEmpty() || eventDescription.isEmpty() || eventLocation.isEmpty() ||
+            eventDateStr.isEmpty() || eventTimeStr.isEmpty() || selectedCategory == null) {
             Toast.makeText(this, "Please fill all fields and select a category", Toast.LENGTH_SHORT).show()
             return
         }
@@ -311,6 +477,11 @@ class AddEventActivity : AppCompatActivity() {
             selectedImageUris.clear()
             imageAdapter.notifyDataSetChanged()
             updateImagePreviewVisibility()
+
+            googleMap?.clear()
+            selectedLocation = null
+            selectedAddress = ""
+            mapContainer.visibility = View.GONE
         }
         Toast.makeText(this, "Fields cleared", Toast.LENGTH_SHORT).show()
     }

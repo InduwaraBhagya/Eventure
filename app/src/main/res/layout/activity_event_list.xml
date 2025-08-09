@@ -17,10 +17,9 @@
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            android:background="@color/admin_primary"
+            android:background="@color/admin_theme"
             app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
 
-        <!-- Search Bar -->
         <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -52,7 +51,6 @@
 
     </com.google.android.material.appbar.AppBarLayout>
 
-    <!-- Main content with filters, list, progress, and empty state -->
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
         android:id="@+id/swipeRefreshLayout"
         android:layout_width="match_parent"
@@ -104,7 +102,6 @@
         </LinearLayout>
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
-    <!-- Floating Action Button -->
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fabAddEvent"
         android:layout_width="wrap_content"
