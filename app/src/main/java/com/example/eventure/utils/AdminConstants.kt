@@ -20,6 +20,7 @@ object AdminConstants {
     const val EXTRA_IS_EDIT_MODE = "extra_is_edit_mode"
 
     const val REQUEST_CODE_PICK_IMAGE = 1001
+    const val REQUEST_CODE_EDIT_EVENT = 1001
     const val REQUEST_CODE_PICK_MULTIPLE_IMAGES = 1002
     const val REQUEST_CODE_DATE_PICKER = 1003
     const val REQUEST_CODE_TIME_PICKER = 1004

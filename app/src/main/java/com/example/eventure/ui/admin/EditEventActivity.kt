@@ -7,6 +7,7 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.ArrayAdapter
@@ -20,11 +21,13 @@ import com.example.eventure.databinding.ActivityEditEventBinding
 import com.example.eventure.data.models.Event
 import com.example.eventure.data.models.EventCategory
 import com.example.eventure.ui.adapters.ImagePreviewAdapter
+import com.example.eventure.utils.AdminConstants
 import com.example.eventure.utils.DateUtils
 import com.example.eventure.utils.EventValidation
 import com.example.eventure.viewmodels.EventManagementViewModel
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.firebase.Timestamp
+import com.google.firebase.firestore.FirebaseFirestore
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -39,6 +42,7 @@ class EditEventActivity : AppCompatActivity() {
 
     companion object {
         const val EXTRA_EVENT_ID = "extra_event_id"
+        private const val TAG = "EditEventActivity"
     }
 
     private val imagePickerLauncher = registerForActivityResult(
@@ -67,8 +71,18 @@ class EditEventActivity : AppCompatActivity() {
         binding = ActivityEditEventBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        eventId = intent.getStringExtra(EXTRA_EVENT_ID) ?: ""
+        // Fixed: Check for multiple possible intent extra keys
+        eventId = intent.getStringExtra("eventId")
+            ?: intent.getStringExtra("EVENT_ID")
+                    ?: intent.getStringExtra(AdminConstants.EXTRA_EVENT_ID)
+                    ?: intent.getStringExtra(EXTRA_EVENT_ID)
+                    ?: ""
+
+        Log.d(TAG, "onCreate: Received eventId = $eventId")
+
         if (eventId.isEmpty()) {
+            Log.e(TAG, "No event ID provided in intent")
+            Toast.makeText(this, "Error: Event ID not found", Toast.LENGTH_SHORT).show()
             finish()
             return
         }
@@ -91,7 +105,8 @@ class EditEventActivity : AppCompatActivity() {
     }
 
     private fun setupViewModel() {
-        viewModel = ViewModelProvider(this)[EventManagementViewModel::class.java]
+        val firestore = FirebaseFirestore.getInstance()
+        viewModel = EventManagementViewModel(firestore)
     }
 
     private fun setupImageRecyclerView() {
@@ -122,25 +137,43 @@ class EditEventActivity : AppCompatActivity() {
 
     private fun observeViewModel() {
         viewModel.isLoading.observe(this) { isLoading ->
+            Log.d(TAG, "Loading state: $isLoading")
             binding.progressBar.visibility = if (isLoading) android.view.View.VISIBLE else android.view.View.GONE
             binding.btnUpdateEvent.isEnabled = !isLoading
         }
 
         viewModel.currentEvent.observe(this) { event ->
+            Log.d(TAG, "Received event: ${event?.name}")
             currentEvent = event
             event?.let { populateEventData(it) }
         }
 
         viewModel.updateResult.observe(this) { success ->
+            Log.d(TAG, "Update result: $success")
             if (success) {
                 Toast.makeText(this, "Event updated successfully!", Toast.LENGTH_SHORT).show()
+                // Fixed: Set result OK when update is successful
+                setResult(RESULT_OK)
                 finish()
             } else {
                 Toast.makeText(this, "Failed to update event. Please try again.", Toast.LENGTH_SHORT).show()
             }
         }
 
+        viewModel.deleteResult.observe(this) { success ->
+            Log.d(TAG, "Delete result: $success")
+            if (success) {
+                Toast.makeText(this, "Event deleted successfully!", Toast.LENGTH_SHORT).show()
+                // Fixed: Set result OK when delete is successful
+                setResult(RESULT_OK)
+                finish()
+            } else {
+                Toast.makeText(this, "Failed to delete event. Please try again.", Toast.LENGTH_SHORT).show()
+            }
+        }
+
         viewModel.errorMessage.observe(this) { message ->
+            Log.e(TAG, "Error message: $message")
             if (message.isNotEmpty()) {
                 Toast.makeText(this, message, Toast.LENGTH_LONG).show()
             }
@@ -148,17 +181,34 @@ class EditEventActivity : AppCompatActivity() {
     }
 
     private fun loadEventData() {
+        Log.d(TAG, "Loading event data for ID: $eventId")
         viewModel.loadEvent(eventId)
     }
 
     private fun populateEventData(event: Event) {
-        binding.editTextEventName.setText(event.name)
-        binding.editTextEventDescription.setText(event.description)
-        binding.editTextEventDate.setText(DateUtils.formatDate(event.date.toDate()))
-        binding.editTextEventTime.setText(event.time)
-        binding.editTextEventLocation.setText(event.location)
-        binding.actvEventCategory.setText(event.category)
-        updateImageCountDisplay()
+        Log.d(TAG, "Populating event data: ${event.name}")
+        try {
+            binding.editTextEventName.setText(event.name)
+            binding.editTextEventDescription.setText(event.description)
+            binding.editTextEventDate.setText(DateUtils.formatDate(event.date.toDate()))
+            binding.editTextEventTime.setText(event.time)
+            binding.editTextEventLocation.setText(event.location)
+
+            // Set category - find the matching category display name
+            val categoryDisplayName = when (event.category.uppercase()) {
+                "MUSICAL" -> "Musical"
+                "SPORTS" -> "Sports"
+                "FOOD" -> "Food"
+                "ART" -> "Art"
+                else -> event.category
+            }
+            binding.actvEventCategory.setText(categoryDisplayName, false)
+
+            updateImageCountDisplay()
+        } catch (e: Exception) {
+            Log.e(TAG, "Error populating event data", e)
+            Toast.makeText(this, "Error loading event data", Toast.LENGTH_SHORT).show()
+        }
     }
 
     private fun openImagePicker() {
@@ -169,6 +219,12 @@ class EditEventActivity : AppCompatActivity() {
 
     private fun showDatePicker() {
         val calendar = Calendar.getInstance()
+
+        // If we have current event data, use that as the initial date
+        currentEvent?.let { event ->
+            calendar.time = event.date.toDate()
+        }
+
         val datePickerDialog = DatePickerDialog(
             this,
             { _, year, month, dayOfMonth ->
@@ -209,6 +265,8 @@ class EditEventActivity : AppCompatActivity() {
         val eventLocation = binding.editTextEventLocation.text.toString().trim()
         val selectedCategory = binding.actvEventCategory.text.toString()
 
+        Log.d(TAG, "Validating event data: name=$eventName, category=$selectedCategory")
+
         val validationResult = EventValidation.validateEventData(
             eventName, eventDescription, eventDateStr, eventTime, eventLocation,
             selectedImages.size + (currentEvent?.imageUrls?.size ?: 0)
@@ -224,19 +282,31 @@ class EditEventActivity : AppCompatActivity() {
             return
         }
 
-        val parsedDate = SimpleDateFormat("MMM dd, yyyy", Locale.getDefault()).parse(eventDateStr)
-        val timestamp = parsedDate?.let { Timestamp(it) } ?: return
+        try {
+            val parsedDate = SimpleDateFormat("MMM dd, yyyy", Locale.getDefault()).parse(eventDateStr)
+            val timestamp = parsedDate?.let { Timestamp(it) } ?: run {
+                Toast.makeText(this, "Invalid date format", Toast.LENGTH_SHORT).show()
+                return
+            }
 
-        currentEvent?.let { event ->
-            val updatedEvent = event.copy(
-                name = eventName,
-                description = eventDescription,
-                date = timestamp,
-                time = eventTime,
-                location = eventLocation,
-                category = selectedCategory
-            )
-            viewModel.updateEvent(eventId, updatedEvent)
+            currentEvent?.let { event ->
+                val updatedEvent = event.copy(
+                    name = eventName,
+                    description = eventDescription,
+                    date = timestamp,
+                    time = eventTime,
+                    location = eventLocation,
+                    category = selectedCategory,
+                    updatedAt = Timestamp.now() // Update the timestamp
+                )
+                Log.d(TAG, "Updating event with ID: $eventId")
+                viewModel.updateEvent(eventId, updatedEvent)
+            } ?: run {
+                Toast.makeText(this, "Event data not loaded", Toast.LENGTH_SHORT).show()
+            }
+        } catch (e: Exception) {
+            Log.e(TAG, "Error parsing date or updating event", e)
+            Toast.makeText(this, "Error updating event: ${e.message}", Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -269,9 +339,16 @@ class EditEventActivity : AppCompatActivity() {
             .setTitle("Delete Event")
             .setMessage("Are you sure you want to delete this event? This action cannot be undone.")
             .setPositiveButton("Delete") { _, _ ->
+                Log.d(TAG, "Deleting event with ID: $eventId")
                 viewModel.deleteEvent(eventId)
             }
             .setNegativeButton("Cancel", null)
             .show()
+    }
+
+    override fun onBackPressed() {
+        super.onBackPressed()
+        // Optional: Set result canceled if user backs out without saving
+        setResult(RESULT_CANCELED)
     }
 }

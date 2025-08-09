@@ -1,6 +1,7 @@
 package com.example.eventure.ui.adapters
 
 import android.content.Intent
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
@@ -19,6 +20,10 @@ class AdminEventAdapter(
     private val onEditClick: (Event) -> Unit,
     private val onDeleteClick: (Event) -> Unit
 ) : ListAdapter<Event, AdminEventAdapter.EventViewHolder>(EventDiffCallback()) {
+
+    companion object {
+        private const val TAG = "AdminEventAdapter"
+    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): EventViewHolder {
         val binding = ItemAdminEventCardBinding.inflate(
@@ -81,36 +86,58 @@ class AdminEventAdapter(
                     )
                 )
 
+                // Root click listener - use callback instead of direct intent
                 root.setOnClickListener {
                     try {
+                        Log.d(TAG, "Event card clicked for event: ${event.id}")
                         onEventClick(event)
                     } catch (e: Exception) {
-                                      val context = binding.root.context
-                        val intent = Intent(context, AdminEventDetailActivity::class.java).apply {
-                            putExtra("eventId", event.id)
-                            putExtra("EVENT_ID", event.id)
-                            flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                        Log.e(TAG, "Error in onEventClick callback", e)
+                        // Fallback to direct intent only if callback fails
+                        try {
+                            val context = binding.root.context
+                            val intent = Intent(context, AdminEventDetailActivity::class.java).apply {
+                                putExtra("eventId", event.id)
+                                putExtra("EVENT_ID", event.id)
+                                // Remove FLAG_ACTIVITY_NEW_TASK
+                            }
+                            context.startActivity(intent)
+                        } catch (ex: Exception) {
+                            Log.e(TAG, "Fallback intent also failed", ex)
                         }
-                        context.startActivity(intent)
                     }
                 }
 
+                // Edit button click listener - use callback instead of direct intent
                 btnEdit.setOnClickListener {
                     try {
+                        Log.d(TAG, "Edit button clicked for event: ${event.id}")
                         onEditClick(event)
                     } catch (e: Exception) {
-                        val context = binding.root.context
-                        val intent = Intent(context, EditEventActivity::class.java).apply {
-                            putExtra("eventId", event.id)
-                            putExtra("EVENT_ID", event.id)
-                            flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                        Log.e(TAG, "Error in onEditClick callback", e)
+                        // Fallback to direct intent only if callback fails
+                        try {
+                            val context = binding.root.context
+                            val intent = Intent(context, EditEventActivity::class.java).apply {
+                                putExtra("eventId", event.id)
+                                putExtra("EVENT_ID", event.id)
+                                // Remove FLAG_ACTIVITY_NEW_TASK
+                            }
+                            context.startActivity(intent)
+                        } catch (ex: Exception) {
+                            Log.e(TAG, "Fallback edit intent also failed", ex)
                         }
-                        context.startActivity(intent)
                     }
                 }
 
+                // Delete button click listener
                 btnDelete?.setOnClickListener {
-                    onDeleteClick(event)
+                    try {
+                        Log.d(TAG, "Delete button clicked for event: ${event.id}")
+                        onDeleteClick(event)
+                    } catch (e: Exception) {
+                        Log.e(TAG, "Error in onDeleteClick callback", e)
+                    }
                 }
             }
         }

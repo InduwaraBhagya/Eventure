@@ -43,9 +43,8 @@ class AdminEventListAdapter(
 
                 if (event.imageUrls.isNotEmpty()) {
                     Glide.with(binding.root.context)
-                        .load(event.imageUrls.first())
-                        .placeholder(android.R.drawable.ic_menu_report_image)
-                        .error(android.R.drawable.ic_menu_report_image)
+                        .load(event.imageUrls[0]) // First image
+                        .placeholder(R.drawable.placeholder_image)
                         .into(EventImage)
                 } else {
                     EventImage.setImageResource(android.R.drawable.ic_menu_report_image)

@@ -548,6 +548,13 @@ class AddEventActivity : AppCompatActivity(), OnMapReadyCallback {
     }
 
     private fun submitEvent() {
+        val currentUser = FirebaseAuth.getInstance().currentUser
+        if (currentUser == null) {
+            Toast.makeText(this, "Please log in to submit an event", Toast.LENGTH_SHORT).show()
+            // Optionally redirect to login screen here
+            return
+        }
+
         if (!validateInputs()) {
             return
         }
@@ -592,7 +599,7 @@ class AddEventActivity : AppCompatActivity(), OnMapReadyCallback {
             tags = emptyList()
         )
 
-        viewModel.saveEvent(event, selectedImageUris)
+        viewModel.saveEvent(event, selectedImageUris, this)
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
