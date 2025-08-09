@@ -15,7 +15,6 @@ object AdminValidation {
     fun validateEvent(event: Event): ValidationResult {
         val errors = mutableListOf<String>()
 
-        // Validate event name
         if (event.name.isBlank()) {
             errors.add("Event name is required")
         } else if (event.name.length < 3) {
@@ -24,7 +23,6 @@ object AdminValidation {
             errors.add("Event name must not exceed 100 characters")
         }
 
-        // Validate description
         if (event.description.isBlank()) {
             errors.add("Event description is required")
         } else if (event.description.length < 10) {
@@ -33,44 +31,36 @@ object AdminValidation {
             errors.add("Event description must not exceed 1000 characters")
         }
 
-        // Validate category
         if (event.category.isBlank()) {
             errors.add("Event category is required")
         }
 
-        // Validate location
         if (event.location.isBlank()) {
             errors.add("Event location is required")
         } else if (event.location.length < 3) {
             errors.add("Event location must be at least 3 characters")
         }
 
-        // Validate time
         if (event.time.isBlank()) {
             errors.add("Event time is required")
         }
 
-        // Validate organizer
         if (event.organizer.isBlank()) {
             errors.add("Organizer name is required")
         }
 
-        // Validate contact email
         if (event.contactEmail.isNotBlank() && !Patterns.EMAIL_ADDRESS.matcher(event.contactEmail).matches()) {
             errors.add("Invalid contact email format")
         }
 
-        // Validate contact phone
         if (event.contactPhone.isNotBlank() && !isValidPhoneNumber(event.contactPhone)) {
             errors.add("Invalid contact phone number format")
         }
 
-        // Validate max attendees
         if (event.maxAttendees < 0) {
             errors.add("Max attendees cannot be negative")
         }
 
-        // Validate ticket price
         if (event.ticketPrice < 0) {
             errors.add("Ticket price cannot be negative")
         }

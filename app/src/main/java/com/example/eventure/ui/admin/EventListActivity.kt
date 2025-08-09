@@ -31,7 +31,6 @@ class EventListActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         setupToolbar()
-        // Remove setupViewModel() call or replace it with initialization code
         setupRecyclerView()
         setupFilterChips()
         setupClickListeners()
@@ -53,14 +52,14 @@ class EventListActivity : AppCompatActivity() {
     private fun setupRecyclerView() {
         eventAdapter = AdminEventListAdapter(
             onEventClick = { event ->
-                //val intent = Intent(this, AdminEventDetailActivity::class.java)
+                val intent = Intent(this, AdminEventDetailActivity::class.java)
                 intent.putExtra(AdminConstants.EXTRA_EVENT_ID, event.id)
                 startActivity(intent)
             },
             onEditClick = { event ->
-//                val intent = Intent(this, EditEventActivity::class.java)
-//                intent.putExtra(EditEventActivity.EXTRA_EVENT_ID, event.id)
-//                startActivity(intent)
+                val intent = Intent(this, EditEventActivity::class.java)
+                intent.putExtra(EditEventActivity.EXTRA_EVENT_ID, event.id)
+                startActivity(intent)
             },
             onDeleteClick = { event ->
                 showDeleteConfirmationDialog(event.id, event.name)
@@ -74,7 +73,9 @@ class EventListActivity : AppCompatActivity() {
     }
 
     private fun setupFilterChips() {
-        // Add "All" chip
+
+        binding.chipGroupFilters.removeAllViews()
+
         val allChip = Chip(this)
         allChip.text = "All"
         allChip.isCheckable = true
@@ -88,7 +89,6 @@ class EventListActivity : AppCompatActivity() {
         }
         binding.chipGroupFilters.addView(allChip)
 
-        // Add category chips
         EventCategory.values().forEach { category ->
             val chip = Chip(this)
             chip.text = category.displayName
@@ -115,8 +115,14 @@ class EventListActivity : AppCompatActivity() {
 
     private fun setupClickListeners() {
         binding.fabAddEvent.setOnClickListener {
-            val intent = Intent()
-            startActivity(intent)
+            try {
+                val intent = Intent(this, AddEventActivity::class.java).apply {
+                    flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                }
+                startActivity(intent)
+            } catch (e: Exception) {
+                Toast.makeText(this, "Error opening add event screen: ${e.message}", Toast.LENGTH_SHORT).show()
+            }
         }
 
         binding.swipeRefreshLayout.setOnRefreshListener {
@@ -174,16 +180,21 @@ class EventListActivity : AppCompatActivity() {
         val searchItem = menu?.findItem(R.id.action_search)
         val searchView = searchItem?.actionView as? SearchView
 
-        searchView?.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
-            override fun onQueryTextSubmit(query: String?): Boolean {
-                return false
-            }
+        searchView?.apply {
+            setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+                override fun onQueryTextSubmit(query: String?): Boolean {
+                    return false
+                }
 
-            override fun onQueryTextChange(newText: String?): Boolean {
-                viewModel.searchEvents(newText ?: "")
-                return true
-            }
-        })
+                override fun onQueryTextChange(newText: String?): Boolean {
+                    viewModel.searchEvents(newText ?: "")
+                    return true
+                }
+            })
+
+            queryHint = "Search events..."
+        }
+
 
         return true
     }

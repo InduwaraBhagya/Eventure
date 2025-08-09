@@ -1,5 +1,6 @@
 package com.example.eventure.ui.adapters
 
+import android.content.Intent
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
@@ -37,11 +38,9 @@ class AdminEventListAdapter(
         fun bind(event: Event) {
             binding.apply {
                 EventName.text = event.name
-                EventDate.text = "${event.date} at ${event.time}"
+                EventDate.text = DateUtils.formatTimestamp(event.date)
                 EventLocation.text = event.location
-                chipCategory.text = event.category
 
-                // Load thumbnail image
                 if (event.imageUrls.isNotEmpty()) {
                     Glide.with(binding.root.context)
                         .load(event.imageUrls.first())
@@ -52,7 +51,6 @@ class AdminEventListAdapter(
                     EventImage.setImageResource(android.R.drawable.ic_menu_report_image)
                 }
 
-                // Category string (uppercase assumed) to display name & color
                 val categoryDisplayName = when (event.category.uppercase()) {
                     "MUSICAL" -> "Musical"
                     "SPORTS" -> "Sports"
@@ -62,19 +60,19 @@ class AdminEventListAdapter(
                 }
                 chipCategory.text = categoryDisplayName
 
-                // Set category indicator color
-                val categoryColor = when (event.category) {
-                    "MUSICAL" -> R.color.category_musical
-                    "SPORTS" -> R.color.category_sports
+                val categoryColor = when (event.category.uppercase()) {
+                    "MUSICAL" -> R.color.admin_theme
+                    "SPORTS" -> R.color.admin_theme
                     "FOOD" -> R.color.category_food
-                    "ART" -> R.color.category_art
+                    "ART" -> R.color.admin_theme
                     else -> R.color.category_default
                 }
+
                 viewCategoryIndicator.setBackgroundColor(
                     binding.root.context.getColor(categoryColor)
                 )
 
-                // Set event status
+                chipCategory.setChipBackgroundColorResource(categoryColor)
                 val isUpcoming = DateUtils.isEventUpcoming(event.date)
                 textViewEventStatus.text = if (isUpcoming) "Upcoming" else "Past"
                 textViewEventStatus.setTextColor(
@@ -83,10 +81,8 @@ class AdminEventListAdapter(
                     )
                 )
 
-                // Show participant count if available
                 textViewParticipantCount.text = "${event.participantCount ?: 0} participants"
 
-                // Click listeners
                 root.setOnClickListener { onEventClick(event) }
                 buttonEdit.setOnClickListener {
                     it.isEnabled = false

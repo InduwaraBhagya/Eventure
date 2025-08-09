@@ -16,7 +16,6 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <!-- Event Image -->
         <ImageView
             android:id="@+id/EventImage"
             android:layout_width="match_parent"
@@ -25,14 +24,12 @@
             android:scaleType="centerCrop"
             tools:src="@drawable/placeholder_event" />
 
-        <!-- Event Content -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:padding="16dp">
 
-            <!-- Event Name and Category -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -63,7 +60,6 @@
 
             </LinearLayout>
 
-            <!-- Event Description -->
             <TextView
                 android:id="@+id/EventDescription"
                 android:layout_width="match_parent"
@@ -75,7 +71,6 @@
                 android:textSize="14sp"
                 tools:text="Join us for an amazing summer music festival featuring local and international artists." />
 
-            <!-- Event Location -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -103,7 +98,6 @@
 
             </LinearLayout>
 
-            <!-- Event Date and Time -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -129,7 +123,6 @@
 
             </LinearLayout>
 
-            <!-- Event Status -->
             <TextView
                 android:id="@+id/EventStatus"
                 android:layout_width="wrap_content"
@@ -139,7 +132,6 @@
                 android:layout_marginBottom="12dp"
                 tools:text="Upcoming" />
 
-            <!-- Action Buttons -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

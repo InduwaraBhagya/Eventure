@@ -72,14 +72,12 @@ class AdminEventListViewModel @Inject constructor(
     private fun applyFiltersAndSearch() {
         var result = allEvents
 
-        // Apply category filter - comparing EventCategory with event.category String name
         currentFilter?.let { category ->
             result = result.filter { event ->
                 event.category == category.name
             }
         }
 
-        // Apply search query
         if (currentSearchQuery.isNotEmpty()) {
             result = result.filter { event ->
                 event.name.contains(currentSearchQuery, ignoreCase = true) ||
@@ -137,29 +135,5 @@ class AdminEventListViewModel @Inject constructor(
                 _isLoading.value = false
             }
         }
-    }
-
-    fun getEventStatistics(): Map<String, Int> {
-        val now = System.currentTimeMillis()
-
-        val upcomingCount = allEvents.count { event ->
-            try {
-                val eventDate = event.date.toDate().time
-                eventDate >= now
-            } catch (e: Exception) {
-                false
-            }
-        }
-        val pastCount = allEvents.size - upcomingCount
-
-        return mapOf(
-            "total" to allEvents.size,
-            "upcoming" to upcomingCount,
-            "past" to pastCount,
-            "musical" to allEvents.count { it.category == EventCategory.MUSICAL.name },
-            "sports" to allEvents.count { it.category == EventCategory.SPORTS.name },
-            "food" to allEvents.count { it.category == EventCategory.FOOD.name },
-            "art" to allEvents.count { it.category == EventCategory.ART.name }
-        )
     }
 }

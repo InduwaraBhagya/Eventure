@@ -43,17 +43,12 @@ class AdminMainActivity : AppCompatActivity() {
     private fun setupClickListeners() {
         binding.cardAddEvent.setOnClickListener {
             Log.d("AdminMain", "Add Event clicked")
-            startActivity(Intent())
+            startActivity(Intent(this, AddEventActivity::class.java))
         }
 
         binding.cardViewEvents.setOnClickListener {
             Log.d("AdminMain", "View Events clicked")
             startActivity(Intent(this, EventListActivity::class.java))
-        }
-
-        binding.cardAnalytics.setOnClickListener {
-            Log.d("AdminMain", "Analytics clicked")
-            // TODO: Implement analytics activity and navigation
         }
 
         binding.btnRefresh.setOnClickListener {
@@ -66,15 +61,6 @@ class AdminMainActivity : AppCompatActivity() {
         lifecycleScope.launch {
             viewModel.dashboardState.collect { state ->
                 updateUI(state)
-            }
-        }
-
-        lifecycleScope.launch {
-            viewModel.adminUser.collect { admin ->
-                admin?.let {
-                    binding.AdminName.text = "Welcome, ${it.name}"
-                    binding.AdminEmail.text = it.email
-                }
             }
         }
 
@@ -101,7 +87,6 @@ class AdminMainActivity : AppCompatActivity() {
         binding.apply {
             TotalEvents.text = (analytics["totalEvents"] as? Number)?.toString() ?: "0"
             ActiveEvents.text = (analytics["activeEvents"] as? Number)?.toString() ?: "0"
-            RecentEvents.text = (analytics["recentEvents"] as? Number)?.toString() ?: "0"
 
             val categoryData = analytics["categoryData"] as? Map<String, Number>
             categoryData?.let { data ->

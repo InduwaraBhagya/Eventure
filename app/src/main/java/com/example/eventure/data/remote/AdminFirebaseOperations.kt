@@ -18,30 +18,33 @@ class AdminFirestoreOperations @Inject constructor(
         return try {
             val eventsCollection = firestore.collection(AdminConstants.EVENTS_COLLECTION)
 
-            // Get total events count
+
             val totalEvents = eventsCollection.get().await().size()
 
-            // Get events by category
-            val categories = listOf("Musical", "Sports", "Food", "Art")
+            val categories = mapOf(
+                "Musical" to "MUSICAL",
+                "Sports" to "SPORTS",
+                "Food" to "FOOD",
+                "Art" to "ART"
+            )
             val categoryData = mutableMapOf<String, Int>()
 
-            categories.forEach { category ->
+            categories.forEach { (displayName, firestoreValue) ->
                 val count = eventsCollection
-                    .whereEqualTo("category", category)
+                    .whereEqualTo("category", firestoreValue)
                     .get()
                     .await()
                     .size()
-                categoryData[category] = count
+                categoryData[displayName] = count
             }
 
-            // Get active events count
             val activeEvents = eventsCollection
                 .whereEqualTo("status", "active")
                 .get()
                 .await()
                 .size()
 
-            // Get recent events (last 30 days)
+
             val thirtyDaysAgo = System.currentTimeMillis() - (30 * 24 * 60 * 60 * 1000)
             val recentEvents = eventsCollection
                 .whereGreaterThan("createdAt", com.google.firebase.Timestamp(thirtyDaysAgo / 1000, 0))
